@@ -1,2 +1,3 @@
-# ui
+# @notifiery/ui
+
 Notifiery UI Kit
