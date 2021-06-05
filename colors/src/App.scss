@@ -1,9 +1,25 @@
 .App {}
 
+.modes {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+}
+
+.mode {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .colors {
   display: grid;
   grid-template-rows: repeat(14, 64px);
-  grid-template-columns: repeat(11, 64px);
+  grid-template-columns: repeat(10, 64px);
+}
+
+.controls {
+  flex: 1;
 }
 
 .color {
@@ -21,8 +37,11 @@
   }
 
   &-contrast {
-    &-black {color: #000;}
-    &-white {color: #fff;}
+    color: #fff; background: rgba(0, 0, 0, 0.5); border-radius: 4px; padding: 2px 4px;
+
+    &-satisfying {
+      background: rgba(0, 255, 0, 0.5);
+    }
   }
 }
 
@@ -37,6 +56,7 @@
 .horizontal-slider {
   width: 100%;
   max-width: 500px;
+  min-width: 500px;
   height: 50px;
   border: 1px solid grey;
 }
