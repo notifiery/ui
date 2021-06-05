@@ -53,7 +53,7 @@ function App() {
       for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
         const stepPercentage = stepIndex / totalSteps;
         const lightness = calculateLightness(stepPercentage);
-        const color = oklabToRgb([lightness, 0, 0]);
+        const color = oklabToRgb(lightness, 0, 0);
 
         steps.push({
           color,
