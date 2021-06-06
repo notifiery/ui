@@ -4,9 +4,7 @@ import { rgb } from 'wcag-contrast';
 import ReactSlider from 'react-slider';
 
 function App() {
-  const showContrastScores = false;
-
-  const MAX_LIGHTNESS = 0.9999999934735462;
+  const showContrastScores = true;
 
   const [lightPalette, setLightPalette] = useState<any>(null);
   const [darkPalette, setDarkPalette] = useState<any>(null);
@@ -14,18 +12,17 @@ function App() {
   const [bestLightLoss, setBestLightLoss] = useState<number>(Infinity);
   const [bestDarkLoss, setBestDarkLoss] = useState<number>(Infinity);
 
-  const [maxChroma, setMaxChroma] = useState<number>(0.25);
-  const [hueOffset, setHueOffset] = useState<any>(0/*0.5*/);
+  const [hueOffset, setHueOffset] = useState<any>(0);
 
   const [lightLightness1, setLightLightness1] = useState<any>(0);
   const [lightLightness2, setLightLightness2] = useState<any>(0);
-  const [lightLightness3, setLightLightness3] = useState<any>(0/*0.25*/);
-  const [lightLightness4, setLightLightness4] = useState<any>(0/*0.5*/);
+  const [lightChroma1, setLightChroma1] = useState<any>(0);
+  const [lightChroma2, setLightChroma2] = useState<any>(0);
 
   const [darkLightness1, setDarkLightness1] = useState<any>(0);
   const [darkLightness2, setDarkLightness2] = useState<any>(0);
-  const [darkLightness3, setDarkLightness3] = useState<any>(0/*0.25*/);
-  const [darkLightness4, setDarkLightness4] = useState<any>(0/*0.5*/);
+  const [darkChroma1, setDarkChroma1] = useState<any>(0);
+  const [darkChroma2, setDarkChroma2] = useState<any>(0);
 
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
@@ -37,22 +34,20 @@ function App() {
       totalHues: TOTAL_HUES,
       totalSteps: TOTAL_STEPS,
       hueOffset,
-      maxChroma,
       lightness1: lightLightness1,
       lightness2: lightLightness2,
-      lightness3: lightLightness3,
-      lightness4: lightLightness4
+      chroma1: lightChroma1,
+      chroma2: lightChroma2
     });
 
     const darkPalette = buildPalette({
       totalHues: TOTAL_HUES,
       totalSteps: TOTAL_STEPS,
       hueOffset,
-      maxChroma,
       lightness1: darkLightness1,
       lightness2: darkLightness2,
-      lightness3: darkLightness3,
-      lightness4: darkLightness4
+      chroma1: darkChroma1,
+      chroma2: darkChroma2
     });
 
     const minLightContrast700 = getMinLightContrast(lightPalette, 7);
@@ -103,44 +98,45 @@ function App() {
       setBestDarkLoss(darkLoss);
     }
   }, [
-    maxChroma,
     hueOffset,
     lightLightness1,
     lightLightness2,
-    lightLightness3,
-    lightLightness4,
+    lightChroma1,
+    lightChroma2,
     darkLightness1,
     darkLightness2,
-    darkLightness3,
-    darkLightness4
+    darkChroma1,
+    darkChroma2
   ]);
 
-  function calculateLightness(x: number, lightness1: number, lightness2: number, lightness3: number, lightness4: number): number {
-    return Math.max(0, MAX_LIGHTNESS
-      - (lightness1 * (x ** (1/3)))
-      - (lightness2 * (x ** (1/2)))
-      - (lightness3 * (x ** 2))
-      - (lightness4 * (x ** 3)));
+  function calculateChroma(x: number, chroma1: number, chroma2: number): number {
+    return Math.max(0.2, 1
+      - (chroma1 * x)
+      - (chroma2 * (x ** 2)));
+  }
+
+  function calculateLightness(x: number, lightness1: number, lightness2: number): number {
+    return Math.max(0, 1
+      - (lightness1 * x)
+      - (lightness2 * (x ** 2)));
   }
 
   function buildPalette({
     totalHues,
     totalSteps,
     hueOffset,
-    maxChroma,
     lightness1,
     lightness2,
-    lightness3,
-    lightness4
+    chroma1,
+    chroma2
   }: {
     totalHues: any,
     totalSteps: any,
     hueOffset: any,
-    maxChroma: any,
     lightness1: number,
     lightness2: number,
-    lightness3: number,
-    lightness4: number
+    chroma1: number,
+    chroma2: number
   }) {
     const hues = [];
 
@@ -149,7 +145,7 @@ function App() {
 
     for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
       const stepPercentage = stepIndex / totalSteps;
-      const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4);
+      const lightness = calculateLightness(stepPercentage, lightness1, lightness2);
       const color = oklabToRgb(lightness, 0, 0);
 
       steps.push({ color, darkContrast: 0, lightContrast: 0 });
@@ -165,10 +161,11 @@ function App() {
 
       for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
         const stepPercentage = stepIndex / totalSteps;
-        const C = maxChroma * stepPercentage;
+        const chroma = calculateChroma(stepPercentage, chroma1, chroma2);
+        const C = chroma * stepPercentage;
         const a = C * Math.cos(h);
         const b = C * Math.sin(h);
-        const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4);
+        const lightness = calculateLightness(stepPercentage, lightness1, lightness2);
         const color = oklabToRgb(lightness, a, b);
 
         steps.push({ color, darkContrast: 0, lightContrast: 0 });
@@ -255,31 +252,30 @@ function App() {
       performLightPaletteSearch();
       // performDarkPaletteSearch();
     }
-  }, [maxChroma, shouldSearch]);
+  }, [shouldSearch]);
 
   function performLightPaletteSearch() {
     let bestLightPalette;
     let bestLightLoss = Infinity;
     let bestl1: number = 0;
     let bestl2: number = 0;
-    let bestl3: number = 0;
-    let bestl4: number = 0;
+    let bestc1: number = 0;
+    let bestc2: number = 0;
     let bestho: number = 0;
 
     for (let ho = 0; ho <= 1; ho += 0.1) {
     for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       for (let l2 = 0; l2 <= 1; l2 += 0.1) {
-        for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-          for (let l4 = 0; l4 <= 1; l4 += 0.1) {
+        for (let c1 = 0; c1 <= 1; c1 += 0.1) {
+          for (let c2 = 0; c2 <= 1; c2 += 0.1) {
             const lightPalette = buildPalette({
               totalHues: TOTAL_HUES,
               totalSteps: TOTAL_STEPS,
               hueOffset: ho,
-              maxChroma,
-              lightness1: 0,
-              lightness2: 0,
-              lightness3: l3,
-              lightness4: l4
+              lightness1: l1,
+              lightness2: l2,
+              chroma1: c1,
+              chroma2: c2
             });
 
             const minLightContrast700 = getMinLightContrast(lightPalette, 7);
@@ -295,7 +291,7 @@ function App() {
             const minLightContrast900 = getMinLightContrast(lightPalette, 9);
             const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
             const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
-            const targetLightContrast900 = 11;
+            const targetLightContrast900 = 10;
 
             const lightLoss = Math.abs(minLightContrast700 - targetLightContrast700)
               + Math.abs(averageLightContrast800 - targetLightContrast800)
@@ -306,8 +302,8 @@ function App() {
               bestLightLoss = lightLoss;
               bestl1 = l1;
               bestl2 = l2;
-              bestl3 = l3;
-              bestl4 = l4;
+              bestc1 = c1;
+              bestc2 = c2;
               bestho = ho;
             }
           }
@@ -319,8 +315,8 @@ function App() {
     setLightPalette(bestLightPalette);
     setLightLightness1(bestl1);
     setLightLightness2(bestl2);
-    setLightLightness3(bestl3);
-    setLightLightness4(bestl4);
+    setLightChroma1(bestc1);
+    setLightChroma2(bestc2);
     setHueOffset(bestho);
   }
 
@@ -329,22 +325,21 @@ function App() {
     let bestDarkLoss = Infinity;
     let bestl1: number = 0;
     let bestl2: number = 0;
-    let bestl3: number = 0;
-    let bestl4: number = 0;
+    let bestc1: number = 0;
+    let bestc2: number = 0;
 
     for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       for (let l2 = 0; l2 <= 1; l2 += 0.1) {
-        for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-          for (let l4 = 0; l4 <= 1; l4 += 0.1) {
+        for (let c1 = 0; c1 <= 1; c1 += 0.1) {
+          for (let c2 = 0; c2 <= 1; c2 += 0.1) {
             const darkPalette = buildPalette({
               totalHues: TOTAL_HUES,
               totalSteps: TOTAL_STEPS,
               hueOffset: HUE_OFFSET,
-              maxChroma,
               lightness1: l1,
               lightness2: l2,
-              lightness3: l3,
-              lightness4: l4
+              chroma1: c1,
+              chroma2: c2
             });
 
             const minDarkContrast300 = getMinDarkContrast(darkPalette, 3);
@@ -371,8 +366,8 @@ function App() {
               bestDarkLoss = darkLoss;
               bestl1 = l1;
               bestl2 = l2;
-              bestl3 = l3;
-              bestl4 = l4;
+              bestc1 = c1;
+              bestc2 = c2;
             }
           }
         }
@@ -382,8 +377,8 @@ function App() {
     setDarkPalette(bestDarkPalette);
     setDarkLightness1(bestl1);
     setDarkLightness2(bestl2);
-    setDarkLightness3(bestl3);
-    setDarkLightness4(bestl4);
+    setDarkChroma1(bestc1);
+    setDarkChroma2(bestc2);
   }
 
   return (
@@ -428,18 +423,7 @@ function App() {
               )}
             </div>
 
-            <div className="controls">
-              {/* <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={maxChroma}
-                onChange={(value) => setMaxChroma(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              /> */}
-
+            {/* <div className="controls">
               <ReactSlider
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
@@ -466,8 +450,8 @@ function App() {
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
                 trackClassName="example-track"
-                value={lightLightness3}
-                onChange={(value) => setLightLightness3(value)}
+                value={lightChroma1}
+                onChange={(value) => setLightChroma1(value)}
                 min={0}
                 max={1}
                 step={0.01}
@@ -477,13 +461,13 @@ function App() {
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
                 trackClassName="example-track"
-                value={lightLightness4}
-                onChange={(value) => setLightLightness4(value)}
+                value={lightChroma2}
+                onChange={(value) => setLightChroma2(value)}
                 min={0}
                 max={1}
                 step={0.01}
               />
-            </div>
+            </div> */}
           </div>
           <div className="mode mode-dark"
             style={{
@@ -523,18 +507,7 @@ function App() {
               )}
             </div>
 
-            <div className="controls">
-              {/* <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={maxChroma}
-                onChange={(value) => setMaxChroma(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              /> */}
-
+            {/* <div className="controls">
               <ReactSlider
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
@@ -561,8 +534,8 @@ function App() {
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
                 trackClassName="example-track"
-                value={darkLightness3}
-                onChange={(value) => setDarkLightness3(value)}
+                value={darkChroma1}
+                onChange={(value) => setDarkChroma1(value)}
                 min={0}
                 max={1}
                 step={0.01}
@@ -572,13 +545,13 @@ function App() {
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
                 trackClassName="example-track"
-                value={darkLightness4}
-                onChange={(value) => setDarkLightness4(value)}
+                value={darkChroma2}
+                onChange={(value) => setDarkChroma2(value)}
                 min={0}
                 max={1}
                 step={0.01}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       ) : null}
