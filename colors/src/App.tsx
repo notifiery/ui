@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './App.scss';
 import { rgb } from 'wcag-contrast';
 import ReactSlider from 'react-slider';
+import interpolator from 'natural-spline-interpolator';
 
 function App() {
   const showContrastScores = true;
+
+  const chromaInterpolator = interpolator([[0, 0.25], [0.5, 0.4], [1, 0.25]]);
+
+  const GOLDEN_RATIO = 1.618033988749;
 
   const [lightPalette, setLightPalette] = useState<any>(null);
   const [darkPalette, setDarkPalette] = useState<any>(null);
@@ -29,90 +34,92 @@ function App() {
   // const MAX_CHROMA = 0.25;
   const HUE_OFFSET = 0;
 
-  useEffect(() => {
-    const lightPalette = buildPalette({
-      totalHues: TOTAL_HUES,
-      totalSteps: TOTAL_STEPS,
-      hueOffset,
-      lightness1: lightLightness1,
-      lightness2: lightLightness2,
-      chroma1: lightChroma1,
-      chroma2: lightChroma2
-    });
+  // useEffect(() => {
+  //   const lightPalette = buildPalette({
+  //     totalHues: TOTAL_HUES,
+  //     totalSteps: TOTAL_STEPS,
+  //     hueOffset,
+  //     lightness1: lightLightness1,
+  //     lightness2: lightLightness2,
+  //     chroma1: lightChroma1,
+  //     chroma2: lightChroma2
+  //   });
 
-    const darkPalette = buildPalette({
-      totalHues: TOTAL_HUES,
-      totalSteps: TOTAL_STEPS,
-      hueOffset,
-      lightness1: darkLightness1,
-      lightness2: darkLightness2,
-      chroma1: darkChroma1,
-      chroma2: darkChroma2
-    });
+  //   const darkPalette = buildPalette({
+  //     totalHues: TOTAL_HUES,
+  //     totalSteps: TOTAL_STEPS,
+  //     hueOffset,
+  //     lightness1: darkLightness1,
+  //     lightness2: darkLightness2,
+  //     chroma1: darkChroma1,
+  //     chroma2: darkChroma2
+  //   });
 
-    const minLightContrast700 = getMinLightContrast(lightPalette, 7);
-    const maxLightContrast700 = getMaxLightContrast(lightPalette, 7);
-    const averageLightContrast700 = (minLightContrast700 + maxLightContrast700) / 2;
-    const targetLightContrast700 = 5;
+  //   const minLightContrast700 = getMinLightContrast(lightPalette, 7);
+  //   const maxLightContrast700 = getMaxLightContrast(lightPalette, 7);
+  //   const averageLightContrast700 = (minLightContrast700 + maxLightContrast700) / 2;
+  //   const targetLightContrast700 = 5;
 
-    const minLightContrast800 = getMinLightContrast(lightPalette, 8);
-    const maxLightContrast800 = getMaxLightContrast(lightPalette, 8);
-    const averageLightContrast800 = (minLightContrast800 + maxLightContrast800) / 2;
-    const targetLightContrast800 = 7;
+  //   const minLightContrast800 = getMinLightContrast(lightPalette, 8);
+  //   const maxLightContrast800 = getMaxLightContrast(lightPalette, 8);
+  //   const averageLightContrast800 = (minLightContrast800 + maxLightContrast800) / 2;
+  //   const targetLightContrast800 = 7;
 
-    const minLightContrast900 = getMinLightContrast(lightPalette, 9);
-    const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
-    const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
-    const targetLightContrast900 = 11;
+  //   const minLightContrast900 = getMinLightContrast(lightPalette, 9);
+  //   const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
+  //   const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
+  //   const targetLightContrast900 = 11;
 
-    const minDarkContrast300 = getMinDarkContrast(darkPalette, 3);
-    const maxDarkContrast300 = getMaxDarkContrast(darkPalette, 3);
-    const averageDarkContrast300 = (minDarkContrast300 + maxDarkContrast300) / 2;
-    const targetDarkContrast300 = 4.5;
+  //   const minDarkContrast300 = getMinDarkContrast(darkPalette, 3);
+  //   const maxDarkContrast300 = getMaxDarkContrast(darkPalette, 3);
+  //   const averageDarkContrast300 = (minDarkContrast300 + maxDarkContrast300) / 2;
+  //   const targetDarkContrast300 = 4.5;
 
-    const minDarkContrast200 = getMinDarkContrast(darkPalette, 2);
-    const maxDarkContrast200 = getMaxDarkContrast(darkPalette, 2);
-    const averageDarkContrast200 = (minDarkContrast200 + maxDarkContrast200) / 2;
-    const targetDarkContrast200 = 7;
+  //   const minDarkContrast200 = getMinDarkContrast(darkPalette, 2);
+  //   const maxDarkContrast200 = getMaxDarkContrast(darkPalette, 2);
+  //   const averageDarkContrast200 = (minDarkContrast200 + maxDarkContrast200) / 2;
+  //   const targetDarkContrast200 = 7;
 
-    const minDarkContrast100 = getMinDarkContrast(darkPalette, 1);
-    const maxDarkContrast100 = getMaxDarkContrast(darkPalette, 1);
-    const averageDarkContrast100 = (minDarkContrast100 + maxDarkContrast100) / 2;
-    const targetDarkContrast100 = 11;
+  //   const minDarkContrast100 = getMinDarkContrast(darkPalette, 1);
+  //   const maxDarkContrast100 = getMaxDarkContrast(darkPalette, 1);
+  //   const averageDarkContrast100 = (minDarkContrast100 + maxDarkContrast100) / 2;
+  //   const targetDarkContrast100 = 11;
 
-    const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700)
-      + Math.abs(averageLightContrast800 - targetLightContrast800)
-      + Math.abs(averageLightContrast900 - targetLightContrast900);
+  //   const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700)
+  //     + Math.abs(averageLightContrast800 - targetLightContrast800)
+  //     + Math.abs(averageLightContrast900 - targetLightContrast900);
 
-    const darkLoss = Math.abs(averageDarkContrast300 - targetDarkContrast300)
-      + Math.abs(averageDarkContrast200 - targetDarkContrast200)
-      + Math.abs(averageDarkContrast100 - targetDarkContrast100);
+  //   const darkLoss = Math.abs(averageDarkContrast300 - targetDarkContrast300)
+  //     + Math.abs(averageDarkContrast200 - targetDarkContrast200)
+  //     + Math.abs(averageDarkContrast100 - targetDarkContrast100);
 
-    if (lightLoss < bestLightLoss) {
-      setLightPalette(lightPalette);
-      setBestLightLoss(lightLoss);
-    }
+  //   if (lightLoss < bestLightLoss) {
+  //     setLightPalette(lightPalette);
+  //     setBestLightLoss(lightLoss);
+  //   }
 
-    if (darkLoss < bestDarkLoss) {
-      setDarkPalette(darkPalette);
-      setBestDarkLoss(darkLoss);
-    }
-  }, [
-    hueOffset,
-    lightLightness1,
-    lightLightness2,
-    lightChroma1,
-    lightChroma2,
-    darkLightness1,
-    darkLightness2,
-    darkChroma1,
-    darkChroma2
-  ]);
+  //   if (darkLoss < bestDarkLoss) {
+  //     setDarkPalette(darkPalette);
+  //     setBestDarkLoss(darkLoss);
+  //   }
+  // }, [
+  //   hueOffset,
+  //   lightLightness1,
+  //   lightLightness2,
+  //   lightChroma1,
+  //   lightChroma2,
+  //   darkLightness1,
+  //   darkLightness2,
+  //   darkChroma1,
+  //   darkChroma2
+  // ]);
 
   function calculateChroma(x: number, chroma1: number, chroma2: number): number {
-    return Math.max(0.2, 1
+    return /*0.25*/ chromaInterpolator(x);
+
+    return 0.25 /*Math.max(0.25, 1
       - (chroma1 * x)
-      - (chroma2 * (x ** 2)));
+      - (chroma2 * (x ** 2)));*/
   }
 
   function calculateLightness(x: number, lightness1: number, lightness2: number): number {
@@ -263,7 +270,7 @@ function App() {
     let bestc2: number = 0;
     let bestho: number = 0;
 
-    for (let ho = 0; ho <= 1; ho += 0.1) {
+    // for (let ho = 0; ho <= 2; ho += 0.05) {
     for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       for (let l2 = 0; l2 <= 1; l2 += 0.1) {
         for (let c1 = 0; c1 <= 1; c1 += 0.1) {
@@ -271,7 +278,7 @@ function App() {
             const lightPalette = buildPalette({
               totalHues: TOTAL_HUES,
               totalSteps: TOTAL_STEPS,
-              hueOffset: ho,
+              hueOffset: HUE_OFFSET,
               lightness1: l1,
               lightness2: l2,
               chroma1: c1,
@@ -279,23 +286,59 @@ function App() {
             });
 
             const minLightContrast700 = getMinLightContrast(lightPalette, 7);
-            // const maxLightContrast700 = getMaxLightContrast(lightPalette, 7);
-            // const averageLightContrast700 = (minLightContrast700 + maxLightContrast700) / 2;
+            const maxLightContrast700 = getMaxLightContrast(lightPalette, 7);
+            const averageLightContrast700 = (minLightContrast700 + maxLightContrast700) / 2;
             const targetLightContrast700 = 4.5;
 
             const minLightContrast800 = getMinLightContrast(lightPalette, 8);
             const maxLightContrast800 = getMaxLightContrast(lightPalette, 8);
             const averageLightContrast800 = (minLightContrast800 + maxLightContrast800) / 2;
-            const targetLightContrast800 = 7;
+            const targetLightContrast800 = /* 7 */ targetLightContrast700 * GOLDEN_RATIO;
 
             const minLightContrast900 = getMinLightContrast(lightPalette, 9);
             const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
             const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
-            const targetLightContrast900 = 10;
+            const targetLightContrast900 = /*10*/ targetLightContrast800 * GOLDEN_RATIO;
 
-            const lightLoss = Math.abs(minLightContrast700 - targetLightContrast700)
-              + Math.abs(averageLightContrast800 - targetLightContrast800)
-              + Math.abs(averageLightContrast900 - targetLightContrast900);
+            // const minLightContrast600 = getMinLightContrast(lightPalette, 6);
+            // const maxLightContrast600 = getMaxLightContrast(lightPalette, 6);
+            // const averageLightContrast600 = (minLightContrast600 + maxLightContrast600) / 2;
+            // const targetLightContrast600 = /* 7 */ targetLightContrast700 / GOLDEN_RATIO;
+
+            // const minLightContrast500 = getMinLightContrast(lightPalette, 5);
+            // const maxLightContrast500 = getMaxLightContrast(lightPalette, 5);
+            // const averageLightContrast500 = (minLightContrast500 + maxLightContrast500) / 2;
+            // const targetLightContrast500 = /* 7 */ targetLightContrast600 / GOLDEN_RATIO;
+
+            // const minLightContrast400 = getMinLightContrast(lightPalette, 4);
+            // const maxLightContrast400 = getMaxLightContrast(lightPalette, 4);
+            // const averageLightContrast400 = (minLightContrast400 + maxLightContrast400) / 2;
+            // const targetLightContrast400 = /* 7 */ targetLightContrast500 / GOLDEN_RATIO;
+
+            // const minLightContrast300 = getMinLightContrast(lightPalette, 3);
+            // const maxLightContrast300 = getMaxLightContrast(lightPalette, 3);
+            // const averageLightContrast300 = (minLightContrast300 + maxLightContrast300) / 2;
+            // const targetLightContrast300 = /* 7 */ targetLightContrast400 / GOLDEN_RATIO;
+
+            const minLightContrast200 = getMinLightContrast(lightPalette, 2);
+            const maxLightContrast200 = getMaxLightContrast(lightPalette, 2);
+            const averageLightContrast200 = (minLightContrast200 + maxLightContrast200) / 2;
+            const targetLightContrast200 = 1.1; /* 7 */ /*targetLightContrast300 / GOLDEN_RATIO;*/
+
+            // const minLightContrast100 = getMinLightContrast(lightPalette, 1);
+            // const maxLightContrast100 = getMaxLightContrast(lightPalette, 1);
+            // const averageLightContrast100 = (minLightContrast100 + maxLightContrast100) / 2;
+            // const targetLightContrast100 = /* 7 */ targetLightContrast200 / GOLDEN_RATIO;
+
+            const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700) * 22.22222222
+              + Math.abs(averageLightContrast800 - targetLightContrast800) * 5
+              + Math.abs(averageLightContrast900 - targetLightContrast900) * 2.5
+              // + Math.abs(averageLightContrast600 - targetLightContrast600)
+              // + Math.abs(averageLightContrast500 - targetLightContrast500)
+              // + Math.abs(averageLightContrast400 - targetLightContrast400)
+              // + Math.abs(averageLightContrast300 - targetLightContrast300)
+              + Math.abs(averageLightContrast200 - targetLightContrast200) * 100
+              // + Math.abs(averageLightContrast100 - targetLightContrast100)
 
             if (lightLoss < bestLightLoss) {
               bestLightPalette = lightPalette;
@@ -304,20 +347,23 @@ function App() {
               bestl2 = l2;
               bestc1 = c1;
               bestc2 = c2;
-              bestho = ho;
+              // bestho = ho;
             }
           }
         }
       }
     }
-    }
+    // }
 
     setLightPalette(bestLightPalette);
+    setDarkPalette(bestLightPalette);
     setLightLightness1(bestl1);
     setLightLightness2(bestl2);
     setLightChroma1(bestc1);
     setLightChroma2(bestc2);
-    setHueOffset(bestho);
+    // setHueOffset(bestho);
+
+    console.log('bestLightLoss', bestLightLoss);
   }
 
   function performDarkPaletteSearch() {

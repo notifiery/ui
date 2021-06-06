@@ -7591,6 +7591,13 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
+natural-spline-interpolator@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/natural-spline-interpolator/-/natural-spline-interpolator-1.0.2.tgz#2f04599faf51d74e337c7a1d7d68d3ba45554c15"
+  integrity sha1-LwRZn69R104zfHodfWjTukVVTBU=
+  dependencies:
+    tridiagonal-solve "1.x"
+
 negotiator@0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
@@ -10981,6 +10988,11 @@ tr46@^2.0.2:
   integrity sha512-3n1qG+/5kg+jrbTzwAykB5yRYtQCTqOGKq5U5PE3b0a1/mzo6snDhjGS0zJVJunO0NrT3Dg1MLy5TjWP/UJppg==
   dependencies:
     punycode "^2.1.1"
+
+tridiagonal-solve@1.x:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/tridiagonal-solve/-/tridiagonal-solve-1.0.4.tgz#049d2c1e222654c7c2aefaa853eb99a459a6f57e"
+  integrity sha1-BJ0sHiImVMfCrvqoU+uZpFmm9X4=
 
 trim-newlines@^1.0.0:
   version "1.0.0"
