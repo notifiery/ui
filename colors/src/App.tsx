@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './App.scss';
-import { rgb } from 'wcag-contrast';
+import * as wcagContrast from 'wcag-contrast';
 import ReactSlider from 'react-slider';
 import interpolator from 'natural-spline-interpolator';
+import * as culori from 'culori';
 
 function App() {
   const showContrastScores = true;
@@ -115,17 +116,26 @@ function App() {
   // ]);
 
   function calculateChroma(x: number, chroma1: number, chroma2: number): number {
-    return /*0.25*/ chromaInterpolator(x);
+    return chromaInterpolator(x);
 
     return 0.25 /*Math.max(0.25, 1
       - (chroma1 * x)
       - (chroma2 * (x ** 2)));*/
   }
 
-  function calculateLightness(x: number, lightness1: number, lightness2: number): number {
-    return Math.max(0, 1
-      - (lightness1 * x)
-      - (lightness2 * (x ** 2)));
+  function calculateLightness(x: number, lightness1: number, lightness2: number, lightness3: number): number {
+    // return Math.max(0, 1
+    //   - (lightness1 * x)
+    //   - (lightness2 * (x ** 2))
+    //   - (lightness3 * (x ** 3)));
+
+    const lightnessInterpolator = interpolator([
+      [0, 1],
+      [lightness3, lightness1],
+      [1, lightness2]
+    ]);
+
+    return lightnessInterpolator(x);
   }
 
   function buildPalette({
@@ -134,6 +144,7 @@ function App() {
     hueOffset,
     lightness1,
     lightness2,
+    lightness3,
     chroma1,
     chroma2
   }: {
@@ -142,6 +153,7 @@ function App() {
     hueOffset: any,
     lightness1: number,
     lightness2: number,
+    lightness3: number,
     chroma1: number,
     chroma2: number
   }) {
@@ -152,10 +164,19 @@ function App() {
 
     for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
       const stepPercentage = stepIndex / totalSteps;
-      const lightness = calculateLightness(stepPercentage, lightness1, lightness2);
-      const color = oklabToRgb(lightness, 0, 0);
+      const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3);
 
-      steps.push({ color, darkContrast: 0, lightContrast: 0 });
+      const color = culori.oklab({
+        l: lightness,
+        a: 0,
+        b: 0
+      });
+
+      steps.push({
+        hex: culori.formatHex(color),
+        darkContrast: 0,
+        lightContrast: 0
+      });
     }
 
     hues.push(steps);
@@ -172,10 +193,19 @@ function App() {
         const C = chroma * stepPercentage;
         const a = C * Math.cos(h);
         const b = C * Math.sin(h);
-        const lightness = calculateLightness(stepPercentage, lightness1, lightness2);
-        const color = oklabToRgb(lightness, a, b);
+        const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3);
 
-        steps.push({ color, darkContrast: 0, lightContrast: 0 });
+        const color = culori.oklab({
+          l: lightness,
+          a,
+          b
+        });
+
+        steps.push({
+          hex: culori.formatHex(color),
+          darkContrast: 0,
+          lightContrast: 0
+        });
       }
 
       hues.push(steps);
@@ -190,41 +220,12 @@ function App() {
       for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
         const step = steps[stepIndex];
 
-        step.darkContrast = rgb(
-          [darkestStep.color.r, darkestStep.color.g, darkestStep.color.b],
-          [step.color.r, step.color.g, step.color.b]
-        );
-
-        step.lightContrast = rgb(
-          [lightestStep.color.r, lightestStep.color.g, lightestStep.color.b],
-          [step.color.r, step.color.g, step.color.b]
-        );
+        step.darkContrast = wcagContrast.hex(darkestStep.hex, step.hex);
+        step.lightContrast = wcagContrast.hex(lightestStep.hex, step.hex);
       }
     }
 
     return hues;
-  }
-
-  function oklabToRgb(L: number, a: number, b: number) {
-    const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
-    const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
-    const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
-
-    return {
-      r: clamp(255 * gamma(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s)),
-      g: clamp(255 * gamma(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s)),
-      b: clamp(255 * gamma(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s))
-    };
-  }
-
-  function gamma(x: number): number {
-    return (x >= 0.0031308)
-      ? 1.055 * Math.pow(x, 1 / 2.4) - 0.055
-      : 12.92 * x;
-  }
-
-  function clamp(n: number): number {
-    return Math.min(Math.max(0, Math.round(n)), 255);
   }
 
   function getMinLightContrast(palette: any, stepIndex: number) {
@@ -264,25 +265,27 @@ function App() {
   function performLightPaletteSearch() {
     let bestLightPalette;
     let bestLightLoss = Infinity;
-    let bestl1: number = 0;
-    let bestl2: number = 0;
-    let bestc1: number = 0;
-    let bestc2: number = 0;
-    let bestho: number = 0;
+    // let bestl1: number = 0;
+    // let bestl2: number = 0;
+    // let bestc1: number = 0;
+    // let bestc2: number = 0;
+    // let bestho: number = 0;
 
-    // for (let ho = 0; ho <= 2; ho += 0.05) {
+    // for (let ho = 0; ho <= 5; ho += 0.1) {
     for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       for (let l2 = 0; l2 <= 1; l2 += 0.1) {
-        for (let c1 = 0; c1 <= 1; c1 += 0.1) {
-          for (let c2 = 0; c2 <= 1; c2 += 0.1) {
+        for (let l3 = 0.1; l3 <= 0.9; l3 += 0.1) {
+        // for (let c1 = 0; c1 <= 1; c1 += 0.1) {
+          // for (let c2 = 0; c2 <= 1; c2 += 0.1) {
             const lightPalette = buildPalette({
               totalHues: TOTAL_HUES,
               totalSteps: TOTAL_STEPS,
               hueOffset: HUE_OFFSET,
               lightness1: l1,
               lightness2: l2,
-              chroma1: c1,
-              chroma2: c2
+              lightness3: l3,
+              chroma1: 0,
+              chroma2: 0
             });
 
             const minLightContrast700 = getMinLightContrast(lightPalette, 7);
@@ -298,7 +301,7 @@ function App() {
             const minLightContrast900 = getMinLightContrast(lightPalette, 9);
             const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
             const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
-            const targetLightContrast900 = /*10*/ targetLightContrast800 * GOLDEN_RATIO;
+            const targetLightContrast900 = /*11*/ /*10*/ targetLightContrast800 * GOLDEN_RATIO;
 
             // const minLightContrast600 = getMinLightContrast(lightPalette, 6);
             // const maxLightContrast600 = getMaxLightContrast(lightPalette, 6);
@@ -320,47 +323,48 @@ function App() {
             // const averageLightContrast300 = (minLightContrast300 + maxLightContrast300) / 2;
             // const targetLightContrast300 = /* 7 */ targetLightContrast400 / GOLDEN_RATIO;
 
-            const minLightContrast200 = getMinLightContrast(lightPalette, 2);
-            const maxLightContrast200 = getMaxLightContrast(lightPalette, 2);
-            const averageLightContrast200 = (minLightContrast200 + maxLightContrast200) / 2;
-            const targetLightContrast200 = 1.1; /* 7 */ /*targetLightContrast300 / GOLDEN_RATIO;*/
+            // const minLightContrast200 = getMinLightContrast(lightPalette, 2);
+            // const maxLightContrast200 = getMaxLightContrast(lightPalette, 2);
+            // const averageLightContrast200 = (minLightContrast200 + maxLightContrast200) / 2;
+            // const targetLightContrast200 = 1.1; /* 7 */ /*targetLightContrast300 / GOLDEN_RATIO;*/
 
             // const minLightContrast100 = getMinLightContrast(lightPalette, 1);
             // const maxLightContrast100 = getMaxLightContrast(lightPalette, 1);
             // const averageLightContrast100 = (minLightContrast100 + maxLightContrast100) / 2;
             // const targetLightContrast100 = /* 7 */ targetLightContrast200 / GOLDEN_RATIO;
 
-            const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700) * 22.22222222
-              + Math.abs(averageLightContrast800 - targetLightContrast800) * 5
-              + Math.abs(averageLightContrast900 - targetLightContrast900) * 2.5
+            const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700)
+              + Math.abs(averageLightContrast800 - targetLightContrast800)
+              + Math.abs(averageLightContrast900 - targetLightContrast900)
               // + Math.abs(averageLightContrast600 - targetLightContrast600)
               // + Math.abs(averageLightContrast500 - targetLightContrast500)
               // + Math.abs(averageLightContrast400 - targetLightContrast400)
               // + Math.abs(averageLightContrast300 - targetLightContrast300)
-              + Math.abs(averageLightContrast200 - targetLightContrast200) * 100
+              // + Math.abs(averageLightContrast200 - targetLightContrast200) * 100
               // + Math.abs(averageLightContrast100 - targetLightContrast100)
 
             if (lightLoss < bestLightLoss) {
               bestLightPalette = lightPalette;
               bestLightLoss = lightLoss;
-              bestl1 = l1;
-              bestl2 = l2;
-              bestc1 = c1;
-              bestc2 = c2;
+              // bestl1 = l1;
+              // bestl2 = l2;
+              // bestc1 = c1;
+              // bestc2 = c2;
               // bestho = ho;
             }
+          // }
+        // }
           }
-        }
       }
     }
     // }
 
     setLightPalette(bestLightPalette);
     setDarkPalette(bestLightPalette);
-    setLightLightness1(bestl1);
-    setLightLightness2(bestl2);
-    setLightChroma1(bestc1);
-    setLightChroma2(bestc2);
+    // setLightLightness1(bestl1);
+    // setLightLightness2(bestl2);
+    // setLightChroma1(bestc1);
+    // setLightChroma2(bestc2);
     // setHueOffset(bestho);
 
     console.log('bestLightLoss', bestLightLoss);
@@ -384,6 +388,7 @@ function App() {
               hueOffset: HUE_OFFSET,
               lightness1: l1,
               lightness2: l2,
+              lightness3: 0,
               chroma1: c1,
               chroma2: c2
             });
@@ -433,8 +438,8 @@ function App() {
         <div className="modes">
           <div className="mode mode-light"
             style={{
-              background: `rgb(${lightPalette[0][1].color.r}, ${lightPalette[0][1].color.g}, ${lightPalette[0][1].color.b})`,
-              color: `rgb(${lightPalette[0][9].color.r}, ${lightPalette[0][9].color.g}, ${lightPalette[0][9].color.b})`
+              background: lightPalette[0][1].hex,
+              color: lightPalette[0][9].hex
             }}>
             <div className="colors">
               {lightPalette[0].map(
@@ -453,7 +458,7 @@ function App() {
                       <div
                         key={`${hueIndex}-${stepIndex}`}
                         className="color"
-                        style={{ background: `rgb(${step.color.r}, ${step.color.g}, ${step.color.b})` }}>
+                        style={{ background: step.hex }}>
                         {(showContrastScores) ? (<div className={[
                           'color-contrast',
                           (
@@ -517,8 +522,8 @@ function App() {
           </div>
           <div className="mode mode-dark"
             style={{
-              background: `rgb(${darkPalette[0][9].color.r}, ${darkPalette[0][9].color.g}, ${darkPalette[0][9].color.b})`,
-              color: `rgb(${darkPalette[0][1].color.r}, ${darkPalette[0][1].color.g}, ${darkPalette[0][1].color.b})`
+              background: darkPalette[0][9].hex,
+              color: darkPalette[0][1].hex
             }}>
             <div className="colors">
               {darkPalette[0].map(
@@ -537,7 +542,7 @@ function App() {
                       <div
                         key={`${hueIndex}-${stepIndex}`}
                         className="color"
-                        style={{ background: `rgb(${step.color.r}, ${step.color.g}, ${step.color.b})` }}>
+                        style={{ background: step.hex }}>
                         {(showContrastScores) ? (<div className={[
                           'color-contrast',
                           (
