@@ -9,7 +9,7 @@ function App() {
   const showContrastScores = true;
 
   // const chromaInterpolator = interpolator([[0, 0.25], [0.5, 0.4], [1, 0.25]]);
-  const chromaInterpolator = interpolator([[0, 0.5], [0.5, 0.19], [1, 0.11]]); // [[0, 0.5], [0.5, 0.19], [1, 0.11]] is best so far
+  const chromaInterpolator = interpolator([[0, 0.5], [0.5, 0.194], [1, 0.11]]); // [[0, 0.5], [0.5, 0.194], [1, 0.11]] is best so far
 
   const GOLDEN_RATIO = 1.618033988749;
 
