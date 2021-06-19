@@ -315,7 +315,7 @@ function App() {
             const loss400 = getLightLoss(lightPalette, 4, targetContrast400) * (targetContrast700 / targetContrast400) / 2;
             const loss500 = getLightLoss(lightPalette, 5, targetContrast500) * (targetContrast700 / targetContrast500) / 2;
             const loss600 = getLightLoss(lightPalette, 6, targetContrast600) * (targetContrast700 / targetContrast600) / 2;
-            const loss700 = getLightLoss(lightPalette, 7, targetContrast700) * 200;
+            const loss700 = getLightLoss(lightPalette, 7, targetContrast700) * 1000;
             const loss800 = getLightLoss(lightPalette, 8, targetContrast800) * (targetContrast700 / targetContrast800) / 2;
             const loss900 = getLightLoss(lightPalette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
 
