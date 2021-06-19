@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.scss';
 import * as wcagContrast from 'wcag-contrast';
-import ReactSlider from 'react-slider';
 import interpolator from 'natural-spline-interpolator';
 import * as culori from 'culori';
 
@@ -16,105 +15,8 @@ function App() {
   const [lightPalette, setLightPalette] = useState<any>(null);
   const [darkPalette, setDarkPalette] = useState<any>(null);
 
-  const [bestLightLoss, setBestLightLoss] = useState<number>(Infinity);
-  const [bestDarkLoss, setBestDarkLoss] = useState<number>(Infinity);
-
-  const [hueOffset, setHueOffset] = useState<any>(0);
-
-  const [lightLightness1, setLightLightness1] = useState<any>(0);
-  const [lightLightness2, setLightLightness2] = useState<any>(0);
-  const [lightChroma1, setLightChroma1] = useState<any>(0);
-  const [lightChroma2, setLightChroma2] = useState<any>(0);
-
-  const [darkLightness1, setDarkLightness1] = useState<any>(0);
-  const [darkLightness2, setDarkLightness2] = useState<any>(0);
-  const [darkChroma1, setDarkChroma1] = useState<any>(0);
-  const [darkChroma2, setDarkChroma2] = useState<any>(0);
-
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
-  // const MAX_CHROMA = 0.25;
-  const HUE_OFFSET = 0;
-
-  // useEffect(() => {
-  //   const lightPalette = buildPalette({
-  //     totalHues: TOTAL_HUES,
-  //     totalSteps: TOTAL_STEPS,
-  //     hueOffset,
-  //     lightness1: lightLightness1,
-  //     lightness2: lightLightness2,
-  //     chroma1: lightChroma1,
-  //     chroma2: lightChroma2
-  //   });
-
-  //   const darkPalette = buildPalette({
-  //     totalHues: TOTAL_HUES,
-  //     totalSteps: TOTAL_STEPS,
-  //     hueOffset,
-  //     lightness1: darkLightness1,
-  //     lightness2: darkLightness2,
-  //     chroma1: darkChroma1,
-  //     chroma2: darkChroma2
-  //   });
-
-  //   const minLightContrast700 = getMinLightContrast(lightPalette, 7);
-  //   const maxLightContrast700 = getMaxLightContrast(lightPalette, 7);
-  //   const averageLightContrast700 = (minLightContrast700 + maxLightContrast700) / 2;
-  //   const targetLightContrast700 = 5;
-
-  //   const minLightContrast800 = getMinLightContrast(lightPalette, 8);
-  //   const maxLightContrast800 = getMaxLightContrast(lightPalette, 8);
-  //   const averageLightContrast800 = (minLightContrast800 + maxLightContrast800) / 2;
-  //   const targetLightContrast800 = 7;
-
-  //   const minLightContrast900 = getMinLightContrast(lightPalette, 9);
-  //   const maxLightContrast900 = getMaxLightContrast(lightPalette, 9);
-  //   const averageLightContrast900 = (minLightContrast900 + maxLightContrast900) / 2;
-  //   const targetLightContrast900 = 11;
-
-  //   const minDarkContrast300 = getMinDarkContrast(darkPalette, 3);
-  //   const maxDarkContrast300 = getMaxDarkContrast(darkPalette, 3);
-  //   const averageDarkContrast300 = (minDarkContrast300 + maxDarkContrast300) / 2;
-  //   const targetDarkContrast300 = 4.5;
-
-  //   const minDarkContrast200 = getMinDarkContrast(darkPalette, 2);
-  //   const maxDarkContrast200 = getMaxDarkContrast(darkPalette, 2);
-  //   const averageDarkContrast200 = (minDarkContrast200 + maxDarkContrast200) / 2;
-  //   const targetDarkContrast200 = 7;
-
-  //   const minDarkContrast100 = getMinDarkContrast(darkPalette, 1);
-  //   const maxDarkContrast100 = getMaxDarkContrast(darkPalette, 1);
-  //   const averageDarkContrast100 = (minDarkContrast100 + maxDarkContrast100) / 2;
-  //   const targetDarkContrast100 = 11;
-
-  //   const lightLoss = Math.abs(averageLightContrast700 - targetLightContrast700)
-  //     + Math.abs(averageLightContrast800 - targetLightContrast800)
-  //     + Math.abs(averageLightContrast900 - targetLightContrast900);
-
-  //   const darkLoss = Math.abs(averageDarkContrast300 - targetDarkContrast300)
-  //     + Math.abs(averageDarkContrast200 - targetDarkContrast200)
-  //     + Math.abs(averageDarkContrast100 - targetDarkContrast100);
-
-  //   if (lightLoss < bestLightLoss) {
-  //     setLightPalette(lightPalette);
-  //     setBestLightLoss(lightLoss);
-  //   }
-
-  //   if (darkLoss < bestDarkLoss) {
-  //     setDarkPalette(darkPalette);
-  //     setBestDarkLoss(darkLoss);
-  //   }
-  // }, [
-  //   hueOffset,
-  //   lightLightness1,
-  //   lightLightness2,
-  //   lightChroma1,
-  //   lightChroma2,
-  //   darkLightness1,
-  //   darkLightness2,
-  //   darkChroma1,
-  //   darkChroma2
-  // ]);
 
   function calculateChroma(x: number, chroma1: number, chroma2: number): number {
     return chromaInterpolator(x);
@@ -398,52 +300,6 @@ function App() {
                   )
               )}
             </div>
-
-            {/* <div className="controls">
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={lightLightness1}
-                onChange={(value) => setLightLightness1(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={lightLightness2}
-                onChange={(value) => setLightLightness2(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={lightChroma1}
-                onChange={(value) => setLightChroma1(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={lightChroma2}
-                onChange={(value) => setLightChroma2(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-            </div> */}
           </div>
           <div className="mode mode-dark"
             style={{
@@ -482,52 +338,6 @@ function App() {
                   )
               )}
             </div>
-
-            {/* <div className="controls">
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={darkLightness1}
-                onChange={(value) => setDarkLightness1(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={darkLightness2}
-                onChange={(value) => setDarkLightness2(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={darkChroma1}
-                onChange={(value) => setDarkChroma1(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-
-              <ReactSlider
-                className="horizontal-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                value={darkChroma2}
-                onChange={(value) => setDarkChroma2(value)}
-                min={0}
-                max={1}
-                step={0.01}
-              />
-            </div> */}
           </div>
         </div>
       ) : null}
