@@ -182,7 +182,7 @@ function App() {
     let bestLightPalette;
     let bestLightLoss = Infinity;
 
-    for (let ho = 0; ho <= 6; ho += 0.1) {
+    for (let ho = 0; ho <= 3; ho += 0.1) {
     // for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       // for (let l2 = 0; l2 <= 1; l2 += 0.1) {
         // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
