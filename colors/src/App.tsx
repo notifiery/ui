@@ -9,7 +9,7 @@ function App() {
   const showContrastScores = true;
 
   // const chromaInterpolator = interpolator([[0, 0.25], [0.5, 0.4], [1, 0.25]]);
-  const chromaInterpolator = interpolator([[0, 0.3], [0.15, 0.25], [1, 0.05]]);
+  const chromaInterpolator = interpolator([[0, 0.5], [0.5, 0.19], [1, 0.1]]); // [[0, 0.5], [0.5, 0.19], [1, 0.1]] is best so far
 
   const GOLDEN_RATIO = 1.618033988749;
 
@@ -278,12 +278,12 @@ function App() {
     let bestLightPalette;
     let bestLightLoss = Infinity;
 
-    for (let ho = 0; ho <= 3; ho += 0.1) {
+    for (let ho = 0; ho <= 6; ho += 0.1) {
     // for (let l1 = 0; l1 <= 1; l1 += 0.1) {
       // for (let l2 = 0; l2 <= 1; l2 += 0.1) {
         // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
-          for (let l4 = 0; l4 <= 1; l4 += 0.1) {
-            for (let l5 = 0; l5 <= 3; l5 += 0.1) {
+          for (let l4 = 0; l4 <= 1; l4 += 0.05) {
+            for (let l5 = 0; l5 <= 3; l5 += 0.05) {
         // for (let c1 = 0; c1 <= 1; c1 += 0.1) {
           // for (let c2 = 0; c2 <= 1; c2 += 0.1) {
             const lightPalette = buildPalette({
@@ -305,7 +305,7 @@ function App() {
             const targetContrast400 = getAverageLightContrast(lightPalette, 4);
             const targetContrast500 = getAverageLightContrast(lightPalette, 5);
             const targetContrast600 = getAverageLightContrast(lightPalette, 6);
-            const targetContrast700 = 4.7;
+            const targetContrast700 = 4.6;
             const targetContrast800 = getAverageLightContrast(lightPalette, 8);
             const targetContrast900 = /*targetContrast700 * GOLDEN_RATIO * GOLDEN_RATIO*/ 11;
 
