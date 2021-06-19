@@ -275,6 +275,8 @@ function App() {
   }, [shouldSearch]);
 
   function performLightPaletteSearch() {
+    const startTimestamp = Date.now();
+
     let bestLightPalette;
     let bestLightLoss = Infinity;
 
@@ -334,9 +336,9 @@ function App() {
               bestLightPalette = lightPalette;
               bestLightLoss = lightLoss;
 
-              console.log('loss100', loss100);
-              console.log('loss700', loss700);
-              console.log('bestLightLoss updated', bestLightLoss);
+              // console.log('loss100', loss100);
+              // console.log('loss700', loss700);
+              // console.log('bestLightLoss updated', bestLightLoss);
             }
           }
         }
@@ -344,6 +346,10 @@ function App() {
       // }
     // }
     }
+    
+    const endTimestamp = Date.now();
+
+    console.log('Time taken: ', (endTimestamp - startTimestamp), 'ms');
 
     setLightPalette(bestLightPalette);
     setDarkPalette(bestLightPalette);
