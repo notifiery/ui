@@ -68,7 +68,7 @@ function App() {
 
       const h = 2 * Math.PI * 0.7;
       const chroma = calculateChroma(stepPercentage, isLight);
-      const C = chroma * stepPercentage * 0.1;
+      const C = chroma * stepPercentage * 0.2;
       const a = C * Math.cos(h);
       const b = C * Math.sin(h);
 
