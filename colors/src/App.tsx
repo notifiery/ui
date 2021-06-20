@@ -213,9 +213,6 @@ function App() {
       performLightPaletteSearch();
       performDarkPaletteSearch();
       setIsSearchCompleted(true);
-
-      console.log('Light palette', lightPalette);
-      console.log('Dark palette', darkPalette);
     }
   }, [shouldSearch]);
 
@@ -256,7 +253,7 @@ function App() {
 
     const ho = 3.762;
 
-    // for (let ho = 0; ho <= 3; ho += 0.1) {
+    // for (let ho = 0; ho <= 2 * Math.PI / TOTAL_HUES; ho += degreesToRadians(1)) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
           for (let l3 = 0; l3 <= 1; l3 += 0.1) {
@@ -332,9 +329,7 @@ function App() {
                   setLightness1(l1);
                   setLightness2(l2);
 
-                  // console.log('loss100', loss100);
-                  // console.log('loss700', loss700);
-                  // console.log('bestLightLoss updated', bestLightLoss);
+                  console.log('light loss updated', bestLoss);
                 }
               // }
             }
@@ -349,7 +344,8 @@ function App() {
 
     setLightPalette(bestPalette);
 
-    console.log('bestLightLoss', bestLoss);
+    console.log('BEST LIGHT LOSS', bestLoss);
+    console.log('BEST LIGHT PALETTE', bestPalette);
   }
 
   function performDarkPaletteSearch() {
@@ -360,7 +356,7 @@ function App() {
 
     const ho = 3.762;
 
-    // for (let ho = 0; ho <= 3; ho += 0.1) {
+    // for (let ho = 0; ho <= 2 * Math.PI / TOTAL_HUES; ho += degreesToRadians(1)) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
           for (let l3 = 0; l3 <= 1; l3 += 0.1) {
@@ -432,13 +428,11 @@ function App() {
                   bestPalette = palette;
                   bestLoss = loss;
 
-                  setHueOffset(ho);
+                  // setHueOffset(ho);
                   setLightness3(l1);
                   setLightness4(l2);
 
-                  // console.log('loss100', loss100);
-                  // console.log('loss700', loss700);
-                  // console.log('bestLightLoss updated', bestLightLoss);
+                  console.log('dark loss updated', bestLoss);
                 }
               // }
             }
@@ -453,7 +447,8 @@ function App() {
 
     setDarkPalette(bestPalette);
 
-    console.log('bestDarkLoss', bestLoss);
+    console.log('BEST DARK LOSS', bestLoss);
+    console.log('BEST DARK PALETTE', bestPalette);
   }
 
   function jumpToPreviousSuitableHueOffset() {
