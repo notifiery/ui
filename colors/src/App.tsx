@@ -8,8 +8,8 @@ import * as culori from 'culori';
 function App() {
   const showContrastScores = true;
 
-  const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2569], [1, 0.0178]]);
-  const darkChromaInterpolator = interpolator([[0, 1], [0.5, 0.2569], [1, 0.0178]]);
+  const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.25], [1, 0.075]]);
+  const darkChromaInterpolator = interpolator([[0, 1], [0.5, 0.25], [1, 0.075]]);
 
   const GOLDEN_RATIO = 1.618033988749;
 
@@ -240,8 +240,8 @@ function App() {
     // for (let ho = 0; ho <= 3; ho += 0.1) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
-          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
+          for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: true,
@@ -250,8 +250,8 @@ function App() {
                   hueOffset: ho,
                   lightness1: l1,
                   lightness2: l2,
-                  lightness3: 0,
-                  lightness4: 1
+                  lightness3: l3,
+                  lightness4: l4
                 });
 
                 const minContrast600 = getMinLightContrast(palette, 6);
@@ -320,8 +320,8 @@ function App() {
               // }
             }
           }
-        // }
-      // }
+        }
+      }
     // }
     
     const endTimestamp = Date.now();
@@ -344,8 +344,8 @@ function App() {
     // for (let ho = 0; ho <= 3; ho += 0.1) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
-          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
+          for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: false,
@@ -354,8 +354,8 @@ function App() {
                   hueOffset: ho,
                   lightness1: l1,
                   lightness2: l2,
-                  lightness3: 0,
-                  lightness4: 1
+                  lightness3: l3,
+                  lightness4: l4
                 });
 
                 const minDarkContrast400 = getMinDarkContrast(palette, 4);
@@ -422,8 +422,8 @@ function App() {
                   // console.log('bestLightLoss updated', bestLightLoss);
                 }
               // }
-            // }
-          // }
+            }
+          }
         }
       }
     // }
