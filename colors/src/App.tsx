@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.scss';
 import * as wcagContrast from 'wcag-contrast';
+import ReactSlider from 'react-slider';
 import interpolator from 'natural-spline-interpolator';
 import * as culori from 'culori';
 
@@ -17,6 +18,12 @@ function App() {
 
   const [lightPalette, setLightPalette] = useState<any>(null);
   const [darkPalette, setDarkPalette] = useState<any>(null);
+
+  const [hueOffset, setHueOffset] = useState<any>(0);
+  const [lightness1, setLightness1] = useState<any>(0);
+  const [lightness2, setLightness2] = useState<any>(0);
+  const [lightness3, setLightness3] = useState<any>(0);
+  const [lightness4, setLightness4] = useState<any>(0);
 
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
@@ -74,7 +81,8 @@ function App() {
         hex: culori.formatHex(color),
         darkContrast: 0,
         lightContrast: 0,
-        whiteContrast: 0
+        whiteContrast: 0,
+        blackContrast: 0
       });
     }
 
@@ -104,7 +112,8 @@ function App() {
           hex: culori.formatHex(color),
           darkContrast: 0,
           lightContrast: 0,
-          whiteContrast: 0
+          whiteContrast: 0,
+          blackContrast: 0
         });
       }
 
@@ -123,6 +132,7 @@ function App() {
         step.darkContrast = wcagContrast.hex(darkestStep.hex, step.hex);
         step.lightContrast = wcagContrast.hex(lightestStep.hex, step.hex);
         step.whiteContrast = wcagContrast.hex('#ffffff', step.hex);
+        step.blackContrast = wcagContrast.hex('#000000', step.hex);
       }
     }
 
@@ -135,9 +145,21 @@ function App() {
     }, 0);
   }
 
+  function getDarkLoss(palette: any, stepIndex: number, targetContrast: number) {
+    return palette.reduce((loss: number, steps: any) => {
+      return loss + Math.abs(steps[stepIndex].darkContrast - targetContrast);
+    }, 0);
+  }
+
   function getWhiteLoss(palette: any, stepIndex: number, targetContrast: number) {
     return palette.reduce((loss: number, steps: any) => {
       return loss + Math.abs(steps[stepIndex].whiteContrast - targetContrast);
+    }, 0);
+  }
+
+  function getBlackLoss(palette: any, stepIndex: number, targetContrast: number) {
+    return palette.reduce((loss: number, steps: any) => {
+      return loss + Math.abs(steps[stepIndex].blackContrast - targetContrast);
     }, 0);
   }
 
@@ -147,14 +169,39 @@ function App() {
     }, 0) / palette.length;
   }
 
+  function getAverageDarkContrast(palette: any, stepIndex: number) {
+    return palette.reduce((contrast: number, steps: any) => {
+      return contrast + steps[stepIndex].darkContrast;
+    }, 0) / palette.length;
+  }
+
   const [shouldSearch, setShouldSearch] = useState<boolean>(true);
+  const [isSearchCompleted, setIsSearchCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     if (shouldSearch) {
       setShouldSearch(false);
       performLightPaletteSearch();
+      setIsSearchCompleted(true);
     }
   }, [shouldSearch]);
+
+  useEffect(() => {
+    if (isSearchCompleted) {
+      const lightPalette = buildPalette({
+        totalHues: TOTAL_HUES,
+        totalSteps: TOTAL_STEPS,
+        hueOffset: hueOffset,
+        lightness1: lightness1,
+        lightness2: lightness2,
+        lightness3: 0,
+        lightness4: 1
+      });
+
+      setLightPalette(lightPalette);
+      setDarkPalette(lightPalette);
+    }
+  }, [hueOffset, lightness1, lightness2, isSearchCompleted]);
 
   function performLightPaletteSearch() {
     const startTimestamp = Date.now();
@@ -162,7 +209,9 @@ function App() {
     let bestLightPalette;
     let bestLightLoss = Infinity;
 
-    for (let ho = 0; ho <= 3; ho += 0.1) {
+    const ho = 3.762;
+
+    // for (let ho = 0; ho <= 3; ho += 0.1) {
       for (let l1 = 0; l1 <= 1; l1 += 0.05) {
         for (let l2 = 0; l2 <= 3; l2 += 0.05) {
           // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
@@ -213,6 +262,10 @@ function App() {
                   bestLightPalette = lightPalette;
                   bestLightLoss = lightLoss;
 
+                  setHueOffset(ho);
+                  setLightness1(l1);
+                  setLightness2(l2);
+
                   // console.log('loss100', loss100);
                   // console.log('loss700', loss700);
                   // console.log('bestLightLoss updated', bestLightLoss);
@@ -222,7 +275,7 @@ function App() {
           // }
         }
       }
-    }
+    // }
     
     const endTimestamp = Date.now();
 
@@ -232,6 +285,61 @@ function App() {
     setDarkPalette(bestLightPalette);
 
     console.log('bestLightLoss', bestLightLoss);
+  }
+
+  function jumpToPreviousSuitableHueOffset() {
+    for (let ho = hueOffset - 0.001; ho >= 0; ho -= 0.001) {
+      const lightPalette = buildPalette({
+        totalHues: TOTAL_HUES,
+        totalSteps: TOTAL_STEPS,
+        hueOffset: ho,
+        lightness1: lightness1,
+        lightness2: lightness2,
+        lightness3: 0,
+        lightness4: 1
+      });
+
+      const isSuitable = lightPalette.every((steps) => {
+        return steps[6].lightContrast >= 3 &&
+          steps[7].lightContrast >= 4.5 &&
+          steps[8].lightContrast >= 7 &&
+          steps[9].lightContrast >= 11;
+      });
+
+      if (isSuitable) {
+        setLightPalette(lightPalette);
+        setHueOffset(ho);
+        break;
+      }
+    }
+  }
+
+  function jumpToNextSuitableHueOffset() {
+    console.log('JUMP');
+    for (let ho = hueOffset + 0.001; ho <= degreesToRadians(360); ho += 0.001) {
+      const lightPalette = buildPalette({
+        totalHues: TOTAL_HUES,
+        totalSteps: TOTAL_STEPS,
+        hueOffset: ho,
+        lightness1: lightness1,
+        lightness2: lightness2,
+        lightness3: 0,
+        lightness4: 1
+      });
+
+      const isSuitable = lightPalette.every((steps) => {
+        return steps[6].lightContrast >= 3 &&
+          steps[7].lightContrast >= 4.5 &&
+          steps[8].lightContrast >= 7 &&
+          steps[9].lightContrast >= 11;
+      });
+
+      if (isSuitable) {
+        setLightPalette(lightPalette);
+        setHueOffset(ho);
+        break;
+      }
+    }
   }
 
   function degreesToRadians(degrees: number): number {
@@ -279,6 +387,21 @@ function App() {
                       </div>
                   )
               )}
+            </div>
+            <div className="controls">
+              <ReactSlider
+                className="horizontal-slider"
+                thumbClassName="example-thumb"
+                trackClassName="example-track"
+                value={hueOffset}
+                onChange={(value) => setHueOffset(value)}
+                min={0}
+                max={degreesToRadians(360)}
+                step={0.001}
+              />
+              <button type="button" onClick={jumpToPreviousSuitableHueOffset}>←</button>
+              {hueOffset}
+              <button type="button" onClick={jumpToNextSuitableHueOffset}>→</button>
             </div>
           </div>
           <div className="mode mode-dark"
