@@ -293,7 +293,7 @@ function App() {
                   continue;
                 }
 
-                const targetContrast100 = 1.05;
+                const targetContrast100 = 1.15;
                 const targetContrast200 = getAverageLightContrast(palette, 2);
                 const targetContrast300 = getAverageLightContrast(palette, 3);
                 const targetContrast400 = getAverageLightContrast(palette, 4);
