@@ -304,13 +304,13 @@ function App() {
                 const targetContrast900 = 11;
 
                 const loss100 = getWhiteLoss(palette, 1, targetContrast100) * (targetContrast700 / targetContrast100);
-                const loss200 = getLightLoss(palette, 2, targetContrast200) * (targetContrast700 / targetContrast200) / 2;
-                const loss300 = getLightLoss(palette, 3, targetContrast300) * (targetContrast700 / targetContrast300) / 2;
-                const loss400 = getLightLoss(palette, 4, targetContrast400) * (targetContrast700 / targetContrast400) / 2;
-                const loss500 = getLightLoss(palette, 5, targetContrast500) * (targetContrast700 / targetContrast500) / 2;
-                const loss600 = getLightLoss(palette, 6, targetContrast600) * (targetContrast700 / targetContrast600) / 2;
+                const loss200 = getLightLoss(palette, 2, targetContrast200) * (targetContrast700 / targetContrast200);
+                const loss300 = getLightLoss(palette, 3, targetContrast300) * (targetContrast700 / targetContrast300);
+                const loss400 = getLightLoss(palette, 4, targetContrast400) * (targetContrast700 / targetContrast400);
+                const loss500 = getLightLoss(palette, 5, targetContrast500) * (targetContrast700 / targetContrast500);
+                const loss600 = getLightLoss(palette, 6, targetContrast600) * (targetContrast700 / targetContrast600);
                 const loss700 = getLightLoss(palette, 7, targetContrast700);
-                const loss800 = getLightLoss(palette, 8, targetContrast800) * (targetContrast700 / targetContrast800) / 2;
+                const loss800 = getLightLoss(palette, 8, targetContrast800) * (targetContrast700 / targetContrast800);
                 const loss900 = getLightLoss(palette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
 
                 const loss = 0
@@ -408,13 +408,13 @@ function App() {
                 const targetContrast100 = 11;
 
                 const loss900 = getBlackLoss(palette, 9, targetContrast900) * (targetContrast300 / targetContrast900);
-                const loss800 = getDarkLoss(palette, 8, targetContrast800) * (targetContrast300 / targetContrast800) / 2;
-                const loss700 = getDarkLoss(palette, 7, targetContrast700) * (targetContrast300 / targetContrast700) / 2;
-                const loss600 = getDarkLoss(palette, 6, targetContrast600) * (targetContrast300 / targetContrast600) / 2;
-                const loss500 = getDarkLoss(palette, 5, targetContrast500) * (targetContrast300 / targetContrast500) / 2;
-                const loss400 = getDarkLoss(palette, 4, targetContrast400) * (targetContrast300 / targetContrast400) / 2;
+                const loss800 = getDarkLoss(palette, 8, targetContrast800) * (targetContrast300 / targetContrast800);
+                const loss700 = getDarkLoss(palette, 7, targetContrast700) * (targetContrast300 / targetContrast700);
+                const loss600 = getDarkLoss(palette, 6, targetContrast600) * (targetContrast300 / targetContrast600);
+                const loss500 = getDarkLoss(palette, 5, targetContrast500) * (targetContrast300 / targetContrast500);
+                const loss400 = getDarkLoss(palette, 4, targetContrast400) * (targetContrast300 / targetContrast400);
                 const loss300 = getDarkLoss(palette, 3, targetContrast300);
-                const loss200 = getDarkLoss(palette, 2, targetContrast200) * (targetContrast300 / targetContrast200) / 2;
+                const loss200 = getDarkLoss(palette, 2, targetContrast200) * (targetContrast300 / targetContrast200);
                 const loss100 = getDarkLoss(palette, 1, targetContrast100) * (targetContrast300 / targetContrast100);
 
                 const loss = 0
