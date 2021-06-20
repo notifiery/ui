@@ -8,12 +8,8 @@ import * as culori from 'culori';
 function App() {
   const showContrastScores = true;
 
-  // const chromaInterpolator = interpolator([[0, 0.25], [0.5, 0.4], [1, 0.25]]);
-
-  // [[0, 0.5], [0.5, 0.2], [1, 0.091]] is best so far for 4.6
-  // [[0, 0.5], [0.5, 0.2565], [1, 0.0178]] is best so far for 4.8
   const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2569], [1, 0.0178]]);
-  const darkChromaInterpolator = interpolator([[0, 0.7432], [0.5, 0.2702], [1, 0.0324]]);
+  const darkChromaInterpolator = interpolator([[0, 1], [0.5, 0.2569], [1, 0.0178]]);
 
   const GOLDEN_RATIO = 1.618033988749;
 
@@ -180,6 +176,18 @@ function App() {
     }, 0) / palette.length;
   }
 
+  function getMinLightContrast(palette: any, stepIndex: number) {
+    return palette.reduce((contrast: number, steps: any) => {
+      return Math.min(contrast, steps[stepIndex].lightContrast);
+    }, Infinity);
+  }
+
+  function getMinDarkContrast(palette: any, stepIndex: number) {
+    return palette.reduce((contrast: number, steps: any) => {
+      return Math.min(contrast, steps[stepIndex].darkContrast);
+    }, Infinity);
+  }
+
   const [shouldSearch, setShouldSearch] = useState<boolean>(true);
   const [isSearchCompleted, setIsSearchCompleted] = useState<boolean>(false);
 
@@ -192,34 +200,34 @@ function App() {
     }
   }, [shouldSearch]);
 
-  useEffect(() => {
-    if (isSearchCompleted) {
-      const lightPalette = buildPalette({
-        isLight: true,
-        totalHues: TOTAL_HUES,
-        totalSteps: TOTAL_STEPS,
-        hueOffset: hueOffset,
-        lightness1: lightness1,
-        lightness2: lightness2,
-        lightness3: 0,
-        lightness4: 1
-      });
+  // useEffect(() => {
+  //   if (isSearchCompleted) {
+  //     const lightPalette = buildPalette({
+  //       isLight: true,
+  //       totalHues: TOTAL_HUES,
+  //       totalSteps: TOTAL_STEPS,
+  //       hueOffset: hueOffset,
+  //       lightness1: lightness1,
+  //       lightness2: lightness2,
+  //       lightness3: 0,
+  //       lightness4: 1
+  //     });
 
-      const darkPalette = buildPalette({
-        isLight: false,
-        totalHues: TOTAL_HUES,
-        totalSteps: TOTAL_STEPS,
-        hueOffset: hueOffset,
-        lightness1: lightness3,
-        lightness2: lightness4,
-        lightness3: 0,
-        lightness4: 1
-      });
+  //     const darkPalette = buildPalette({
+  //       isLight: false,
+  //       totalHues: TOTAL_HUES,
+  //       totalSteps: TOTAL_STEPS,
+  //       hueOffset: hueOffset,
+  //       lightness1: lightness3,
+  //       lightness2: lightness4,
+  //       lightness3: 0,
+  //       lightness4: 1
+  //     });
 
-      setLightPalette(lightPalette);
-      setDarkPalette(darkPalette);
-    }
-  }, [hueOffset, lightness1, lightness2, lightness3, lightness4, isSearchCompleted]);
+  //     setLightPalette(lightPalette);
+  //     setDarkPalette(darkPalette);
+  //   }
+  // }, [hueOffset, lightness1, lightness2, lightness3, lightness4, isSearchCompleted]);
 
   function performLightPaletteSearch() {
     const startTimestamp = Date.now();
@@ -230,10 +238,10 @@ function App() {
     const ho = 3.762;
 
     // for (let ho = 0; ho <= 3; ho += 0.1) {
-      for (let l1 = 0; l1 <= 1; l1 += 0.05) {
-        for (let l2 = 0; l2 <= 3; l2 += 0.05) {
-          // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
-            // for (let l4 = 0; l4 <= 1; l4 += 0.05) {
+      for (let l1 = 0; l1 <= 1; l1 += 0.1) {
+        for (let l2 = 0; l2 <= 3; l2 += 0.1) {
+          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: true,
@@ -246,13 +254,33 @@ function App() {
                   lightness4: 1
                 });
 
+                const minContrast600 = getMinLightContrast(palette, 6);
+                if (minContrast600 < 3) {
+                  continue;
+                }
+
+                const minContrast700 = getMinLightContrast(palette, 7);
+                if (minContrast700 < 4.5) {
+                  continue;
+                }
+                
+                const minContrast800 = getMinLightContrast(palette, 8);
+                if (minContrast800 < 7) {
+                  continue;
+                }
+
+                const minContrast900 = getMinLightContrast(palette, 9);
+                if (minContrast900 < 11) {
+                  continue;
+                }
+
                 const targetContrast100 = 1.05;
                 const targetContrast200 = getAverageLightContrast(palette, 2);
                 const targetContrast300 = getAverageLightContrast(palette, 3);
                 const targetContrast400 = getAverageLightContrast(palette, 4);
                 const targetContrast500 = getAverageLightContrast(palette, 5);
                 const targetContrast600 = getAverageLightContrast(palette, 6);
-                const targetContrast700 = 4.8;
+                const targetContrast700 = 4.5;
                 const targetContrast800 = getAverageLightContrast(palette, 8);
                 const targetContrast900 = 11;
 
@@ -262,7 +290,7 @@ function App() {
                 const loss400 = getLightLoss(palette, 4, targetContrast400) * (targetContrast700 / targetContrast400) / 2;
                 const loss500 = getLightLoss(palette, 5, targetContrast500) * (targetContrast700 / targetContrast500) / 2;
                 const loss600 = getLightLoss(palette, 6, targetContrast600) * (targetContrast700 / targetContrast600) / 2;
-                const loss700 = getLightLoss(palette, 7, targetContrast700) * 1000;
+                const loss700 = getLightLoss(palette, 7, targetContrast700);
                 const loss800 = getLightLoss(palette, 8, targetContrast800) * (targetContrast700 / targetContrast800) / 2;
                 const loss900 = getLightLoss(palette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
 
@@ -290,10 +318,10 @@ function App() {
                   // console.log('bestLightLoss updated', bestLightLoss);
                 }
               // }
-            // }
-          // }
-        }
-      }
+            }
+          }
+        // }
+      // }
     // }
     
     const endTimestamp = Date.now();
@@ -301,7 +329,6 @@ function App() {
     console.log('Time taken: ', (endTimestamp - startTimestamp), 'ms');
 
     setLightPalette(bestPalette);
-    // setDarkPalette(bestLightPalette);
 
     console.log('bestLightLoss', bestLoss);
   }
@@ -315,29 +342,49 @@ function App() {
     const ho = 3.762;
 
     // for (let ho = 0; ho <= 3; ho += 0.1) {
-      for (let l3 = 0; l3 <= 1; l3 += 0.05) {
-        for (let l4 = 0; l4 <= 3; l4 += 0.05) {
-          // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
-            // for (let l4 = 0; l4 <= 1; l4 += 0.05) {
+      for (let l1 = 0; l1 <= 1; l1 += 0.1) {
+        for (let l2 = 0; l2 <= 3; l2 += 0.1) {
+          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: false,
                   totalHues: TOTAL_HUES,
                   totalSteps: TOTAL_STEPS,
                   hueOffset: ho,
-                  lightness1: l3,
-                  lightness2: l4,
+                  lightness1: l1,
+                  lightness2: l2,
                   lightness3: 0,
                   lightness4: 1
                 });
 
-                const targetContrast900 = 1.05;
+                const minDarkContrast400 = getMinDarkContrast(palette, 4);
+                if (minDarkContrast400 < 3) {
+                  continue;
+                }
+
+                const minDarkContrast300 = getMinDarkContrast(palette, 3);
+                if (minDarkContrast300 < 4.5) {
+                  continue;
+                }
+                
+                const minDarkContrast200 = getMinDarkContrast(palette, 2);
+                if (minDarkContrast200 < 7) {
+                  continue;
+                }
+
+                const minDarkContrast100 = getMinDarkContrast(palette, 1);
+                if (minDarkContrast100 < 11) {
+                  continue;
+                }
+
+                const targetContrast900 = 1.15;
                 const targetContrast800 = getAverageDarkContrast(palette, 8);
                 const targetContrast700 = getAverageDarkContrast(palette, 7);
                 const targetContrast600 = getAverageDarkContrast(palette, 6);
                 const targetContrast500 = getAverageDarkContrast(palette, 5);
                 const targetContrast400 = getAverageDarkContrast(palette, 4);
-                const targetContrast300 = 4.8;
+                const targetContrast300 = 4.5;
                 const targetContrast200 = getAverageDarkContrast(palette, 2);
                 const targetContrast100 = 11;
 
@@ -367,8 +414,8 @@ function App() {
                   bestLoss = loss;
 
                   setHueOffset(ho);
-                  setLightness3(l3);
-                  setLightness4(l4);
+                  setLightness3(l1);
+                  setLightness4(l2);
 
                   // console.log('loss100', loss100);
                   // console.log('loss700', loss700);
@@ -385,10 +432,9 @@ function App() {
 
     console.log('Time taken: ', (endTimestamp - startTimestamp), 'ms');
 
-    setLightPalette(bestPalette);
-    // setDarkPalette(bestLightPalette);
+    setDarkPalette(bestPalette);
 
-    console.log('bestLightLoss', bestLoss);
+    console.log('bestDarkLoss', bestLoss);
   }
 
   function jumpToPreviousSuitableHueOffset() {
