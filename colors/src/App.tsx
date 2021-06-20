@@ -21,12 +21,8 @@ function App() {
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
 
-  function calculateChroma(x: number, chroma1: number, chroma2: number): number {
+  function calculateChroma(x: number): number {
     return chromaInterpolator(x);
-
-    return 0.25 /*Math.max(0.25, 1
-      - (chroma1 * x)
-      - (chroma2 * (x ** 2)));*/
   }
 
   function calculateLightness(x: number, lightness1: number, lightness2: number, lightness3: number, lightness4: number, lightness5: number): number {
@@ -57,9 +53,7 @@ function App() {
     lightness2,
     lightness3,
     lightness4,
-    lightness5,
-    chroma1,
-    chroma2
+    lightness5
   }: {
     totalHues: any,
     totalSteps: any,
@@ -68,9 +62,7 @@ function App() {
     lightness2: number,
     lightness3: number,
     lightness4: number,
-    lightness5: number,
-    chroma1: number,
-    chroma2: number
+    lightness5: number
   }) {
     const hues = [];
 
@@ -82,7 +74,7 @@ function App() {
       const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4, lightness5);
 
       const h = 2 * Math.PI * 0.7;
-      const chroma = calculateChroma(stepPercentage, chroma1, chroma2);
+      const chroma = calculateChroma(stepPercentage);
       const C = chroma * stepPercentage * 0.1;
       const a = C * Math.cos(h);
       const b = C * Math.sin(h);
@@ -111,7 +103,7 @@ function App() {
 
       for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
         const stepPercentage = stepIndex / totalSteps;
-        const chroma = calculateChroma(stepPercentage, chroma1, chroma2);
+        const chroma = calculateChroma(stepPercentage);
         const C = chroma * stepPercentage;
         const a = C * Math.cos(h/* - stepPercentage * degreesToRadians(7)*/);
         const b = C * Math.sin(h/* - stepPercentage * degreesToRadians(7)*/);
@@ -201,9 +193,7 @@ function App() {
               lightness2: 0,
               lightness3: 1,
               lightness4: l4,
-              lightness5: l5,
-              chroma1: 0,
-              chroma2: 0
+              lightness5: l5
             });
 
             const targetContrast100 = 1.05;
