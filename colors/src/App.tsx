@@ -25,24 +25,11 @@ function App() {
     return chromaInterpolator(x);
   }
 
-  function calculateLightness(x: number, lightness1: number, lightness2: number, lightness3: number, lightness4: number, lightness5: number): number {
+  function calculateLightness(x: number, lightness1: number, lightness2: number, lightness3: number, lightness4: number): number {
     return Math.max(0, 1
-      // - (lightness1 * (x ** (1/2)))
-      // - (lightness2 * (x ** (1/3)))
-      // - (lightness3 * x)
-      - (lightness2 * (x ** lightness3))
-      - (lightness4 * (x ** lightness5))
-      // - (lightness5 * (x ** 3))
+      - (lightness1 * (x ** lightness2))
+      - (lightness3 * (x ** lightness4))
     );
-
-    // const lightnessInterpolator = interpolator([
-    //   [0, 1],
-    //   [lightness3, lightness1],
-    //   [lightness4, lightness5],
-    //   [1, lightness2]
-    // ]);
-
-    // return lightnessInterpolator(x);
   }
 
   function buildPalette({
@@ -52,8 +39,7 @@ function App() {
     lightness1,
     lightness2,
     lightness3,
-    lightness4,
-    lightness5
+    lightness4
   }: {
     totalHues: any,
     totalSteps: any,
@@ -61,8 +47,7 @@ function App() {
     lightness1: number,
     lightness2: number,
     lightness3: number,
-    lightness4: number,
-    lightness5: number
+    lightness4: number
   }) {
     const hues = [];
 
@@ -71,7 +56,7 @@ function App() {
 
     for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
       const stepPercentage = stepIndex / totalSteps;
-      const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4, lightness5);
+      const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4);
 
       const h = 2 * Math.PI * 0.7;
       const chroma = calculateChroma(stepPercentage);
@@ -107,7 +92,7 @@ function App() {
         const C = chroma * stepPercentage;
         const a = C * Math.cos(h/* - stepPercentage * degreesToRadians(7)*/);
         const b = C * Math.sin(h/* - stepPercentage * degreesToRadians(7)*/);
-        const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4, lightness5);
+        const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4);
 
         const color = culori.oklab({
           l: lightness,
@@ -178,68 +163,65 @@ function App() {
     let bestLightLoss = Infinity;
 
     for (let ho = 0; ho <= 3; ho += 0.1) {
-    // for (let l1 = 0; l1 <= 1; l1 += 0.1) {
-      // for (let l2 = 0; l2 <= 1; l2 += 0.1) {
-        // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
-          for (let l4 = 0; l4 <= 1; l4 += 0.05) {
-            for (let l5 = 0; l5 <= 3; l5 += 0.05) {
-        // for (let c1 = 0; c1 <= 1; c1 += 0.1) {
-          // for (let c2 = 0; c2 <= 1; c2 += 0.1) {
-            const lightPalette = buildPalette({
-              totalHues: TOTAL_HUES,
-              totalSteps: TOTAL_STEPS,
-              hueOffset: ho,
-              lightness1: 0,
-              lightness2: 0,
-              lightness3: 1,
-              lightness4: l4,
-              lightness5: l5
-            });
+      for (let l1 = 0; l1 <= 1; l1 += 0.05) {
+        for (let l2 = 0; l2 <= 3; l2 += 0.05) {
+          // for (let l3 = 0; l3 <= 3; l3 += 0.1) {
+            // for (let l4 = 0; l4 <= 1; l4 += 0.05) {
+              // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
+                const lightPalette = buildPalette({
+                  totalHues: TOTAL_HUES,
+                  totalSteps: TOTAL_STEPS,
+                  hueOffset: ho,
+                  lightness1: l1,
+                  lightness2: l2,
+                  lightness3: 0,
+                  lightness4: 1
+                });
 
-            const targetContrast100 = 1.05;
-            const targetContrast200 = getAverageLightContrast(lightPalette, 2);
-            const targetContrast300 = getAverageLightContrast(lightPalette, 3);
-            const targetContrast400 = getAverageLightContrast(lightPalette, 4);
-            const targetContrast500 = getAverageLightContrast(lightPalette, 5);
-            const targetContrast600 = getAverageLightContrast(lightPalette, 6);
-            const targetContrast700 = 4.8;
-            const targetContrast800 = getAverageLightContrast(lightPalette, 8);
-            const targetContrast900 = 11;
+                const targetContrast100 = 1.05;
+                const targetContrast200 = getAverageLightContrast(lightPalette, 2);
+                const targetContrast300 = getAverageLightContrast(lightPalette, 3);
+                const targetContrast400 = getAverageLightContrast(lightPalette, 4);
+                const targetContrast500 = getAverageLightContrast(lightPalette, 5);
+                const targetContrast600 = getAverageLightContrast(lightPalette, 6);
+                const targetContrast700 = 4.8;
+                const targetContrast800 = getAverageLightContrast(lightPalette, 8);
+                const targetContrast900 = 11;
 
-            const loss100 = getWhiteLoss(lightPalette, 1, targetContrast100) * (targetContrast700 / targetContrast100);
-            const loss200 = getLightLoss(lightPalette, 2, targetContrast200) * (targetContrast700 / targetContrast200) / 2;
-            const loss300 = getLightLoss(lightPalette, 3, targetContrast300) * (targetContrast700 / targetContrast300) / 2;
-            const loss400 = getLightLoss(lightPalette, 4, targetContrast400) * (targetContrast700 / targetContrast400) / 2;
-            const loss500 = getLightLoss(lightPalette, 5, targetContrast500) * (targetContrast700 / targetContrast500) / 2;
-            const loss600 = getLightLoss(lightPalette, 6, targetContrast600) * (targetContrast700 / targetContrast600) / 2;
-            const loss700 = getLightLoss(lightPalette, 7, targetContrast700) * 1000;
-            const loss800 = getLightLoss(lightPalette, 8, targetContrast800) * (targetContrast700 / targetContrast800) / 2;
-            const loss900 = getLightLoss(lightPalette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
+                const loss100 = getWhiteLoss(lightPalette, 1, targetContrast100) * (targetContrast700 / targetContrast100);
+                const loss200 = getLightLoss(lightPalette, 2, targetContrast200) * (targetContrast700 / targetContrast200) / 2;
+                const loss300 = getLightLoss(lightPalette, 3, targetContrast300) * (targetContrast700 / targetContrast300) / 2;
+                const loss400 = getLightLoss(lightPalette, 4, targetContrast400) * (targetContrast700 / targetContrast400) / 2;
+                const loss500 = getLightLoss(lightPalette, 5, targetContrast500) * (targetContrast700 / targetContrast500) / 2;
+                const loss600 = getLightLoss(lightPalette, 6, targetContrast600) * (targetContrast700 / targetContrast600) / 2;
+                const loss700 = getLightLoss(lightPalette, 7, targetContrast700) * 1000;
+                const loss800 = getLightLoss(lightPalette, 8, targetContrast800) * (targetContrast700 / targetContrast800) / 2;
+                const loss900 = getLightLoss(lightPalette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
 
-            const lightLoss = 0
-              + loss100
-              + loss200
-              + loss300
-              + loss400
-              + loss500
-              + loss600
-              + loss700
-              + loss800
-              + loss900;
+                const lightLoss = 0
+                  + loss100
+                  + loss200
+                  + loss300
+                  + loss400
+                  + loss500
+                  + loss600
+                  + loss700
+                  + loss800
+                  + loss900;
 
-            if (lightLoss < bestLightLoss) {
-              bestLightPalette = lightPalette;
-              bestLightLoss = lightLoss;
+                if (lightLoss < bestLightLoss) {
+                  bestLightPalette = lightPalette;
+                  bestLightLoss = lightLoss;
 
-              // console.log('loss100', loss100);
-              // console.log('loss700', loss700);
-              // console.log('bestLightLoss updated', bestLightLoss);
-            }
-          }
-        }
+                  // console.log('loss100', loss100);
+                  // console.log('loss700', loss700);
+                  // console.log('bestLightLoss updated', bestLightLoss);
+                }
+              // }
+            // }
           // }
-      // }
-    // }
+        }
+      }
     }
     
     const endTimestamp = Date.now();
