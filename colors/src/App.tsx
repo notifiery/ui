@@ -113,8 +113,8 @@ function App() {
         const stepPercentage = stepIndex / totalSteps;
         const chroma = calculateChroma(stepPercentage, chroma1, chroma2);
         const C = chroma * stepPercentage;
-        const a = C * Math.cos(h/* - stepPercentage * 0.5*/);
-        const b = C * Math.sin(h/* - stepPercentage * 0.5*/);
+        const a = C * Math.cos(h/* - stepPercentage * degreesToRadians(7)*/);
+        const b = C * Math.sin(h/* - stepPercentage * degreesToRadians(7)*/);
         const lightness = calculateLightness(stepPercentage, lightness1, lightness2, lightness3, lightness4, lightness5);
 
         const color = culori.oklab({
@@ -262,6 +262,10 @@ function App() {
     console.log('bestLightLoss', bestLightLoss);
   }
 
+  function degreesToRadians(degrees: number): number {
+    return degrees / 180 * Math.PI;
+  }
+
   return (
     <div className="App">
       {(lightPalette && darkPalette) ? (
@@ -292,9 +296,10 @@ function App() {
                         {(showContrastScores) ? (<div className={[
                           'color-contrast',
                           (
+                            (stepIndex === 6 && step.lightContrast >= 3 && step.lightContrast <= 4.5) ||
                             (stepIndex === 7 && step.lightContrast >= 4.5 && step.lightContrast <= 7) ||
                             (stepIndex === 8 && step.lightContrast >= 7 && step.lightContrast <= 11) ||
-                            (stepIndex === 9 && step.lightContrast >= 11 && step.lightContrast <= 15)
+                            (stepIndex === 9 && step.lightContrast >= 11)
                           )
                             ? 'color-contrast-satisfying'
                             : ''
