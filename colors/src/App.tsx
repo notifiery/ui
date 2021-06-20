@@ -213,6 +213,9 @@ function App() {
       performLightPaletteSearch();
       performDarkPaletteSearch();
       setIsSearchCompleted(true);
+
+      console.log('Light palette', lightPalette);
+      console.log('Dark palette', darkPalette);
     }
   }, [shouldSearch]);
 
