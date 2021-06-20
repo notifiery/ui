@@ -87,6 +87,14 @@ function App() {
       });
     }
 
+    steps.push({
+      hex: '#000000',
+      darkContrast: 0,
+      lightContrast: 0,
+      whiteContrast: 0,
+      blackContrast: 0
+    });
+
     hues.push(steps);
 
     // Other colors
@@ -118,6 +126,14 @@ function App() {
         });
       }
 
+      steps.push({
+        hex: '#000000',
+        darkContrast: 0,
+        lightContrast: 0,
+        whiteContrast: 0,
+        blackContrast: 0
+      });
+
       hues.push(steps);
     }
 
@@ -127,7 +143,7 @@ function App() {
       const lightestStep = steps[1];
       const darkestStep = steps[9];
 
-      for (let stepIndex = 0; stepIndex < totalSteps; stepIndex++) {
+      for (let stepIndex = 0; stepIndex < totalSteps + 1; stepIndex++) {
         const step = steps[stepIndex];
 
         step.darkContrast = wcagContrast.hex(darkestStep.hex, step.hex);
@@ -512,8 +528,10 @@ function App() {
                 (step: any, stepIndex: number) =>
                   <div key={stepIndex} className="color-step">
                     {(stepIndex === 0)
-                      ? null
-                      : stepIndex * 100}
+                      ? 'WHITE'
+                      : (stepIndex === 10)
+                        ? 'BLACK'
+                        : stepIndex * 100}
                   </div>
               )}
 
@@ -566,8 +584,10 @@ function App() {
                 (step: any, stepIndex: number) =>
                   <div key={stepIndex} className="color-step">
                     {(stepIndex === 0)
-                      ? null
-                      : stepIndex * 100}
+                      ? 'WHITE'
+                      : (stepIndex === 10)
+                        ? 'BLACK'
+                        : 1000 - stepIndex * 100}
                   </div>
               )}
 
