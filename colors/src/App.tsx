@@ -8,7 +8,10 @@ function App() {
   const showContrastScores = true;
 
   // const chromaInterpolator = interpolator([[0, 0.25], [0.5, 0.4], [1, 0.25]]);
-  const chromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2], [1, 0.091]]); // [[0, 0.5], [0.5, 0.2], [1, 0.091]] is best so far
+
+  // [[0, 0.5], [0.5, 0.2], [1, 0.091]] is best so far for 4.6
+  // [[0, 0.5], [0.5, 0.2565], [1, 0.0178]] is best so far for 4.8
+  const chromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2565], [1, 0.0178]]);
 
   const GOLDEN_RATIO = 1.618033988749;
 
@@ -209,7 +212,7 @@ function App() {
             const targetContrast400 = getAverageLightContrast(lightPalette, 4);
             const targetContrast500 = getAverageLightContrast(lightPalette, 5);
             const targetContrast600 = getAverageLightContrast(lightPalette, 6);
-            const targetContrast700 = 4.6;
+            const targetContrast700 = 4.8;
             const targetContrast800 = getAverageLightContrast(lightPalette, 8);
             const targetContrast900 = /*targetContrast700 * GOLDEN_RATIO * GOLDEN_RATIO*/ 11;
 
