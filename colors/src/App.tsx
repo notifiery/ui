@@ -204,7 +204,7 @@ function App() {
             const targetContrast600 = getAverageLightContrast(lightPalette, 6);
             const targetContrast700 = 4.8;
             const targetContrast800 = getAverageLightContrast(lightPalette, 8);
-            const targetContrast900 = /*targetContrast700 * GOLDEN_RATIO * GOLDEN_RATIO*/ 11;
+            const targetContrast900 = 11;
 
             const loss100 = getWhiteLoss(lightPalette, 1, targetContrast100) * (targetContrast700 / targetContrast100);
             const loss200 = getLightLoss(lightPalette, 2, targetContrast200) * (targetContrast700 / targetContrast200) / 2;
