@@ -12,8 +12,8 @@ function App() {
 
   // [[0, 0.5], [0.5, 0.2], [1, 0.091]] is best so far for 4.6
   // [[0, 0.5], [0.5, 0.2565], [1, 0.0178]] is best so far for 4.8
-  const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2565], [1, 0.0178]]);
-  const darkChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2565], [1, 0.0178]]);
+  const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.2569], [1, 0.0178]]);
+  const darkChromaInterpolator = interpolator([[0, 0.7432], [0.5, 0.2702], [1, 0.0324]]);
 
   const GOLDEN_RATIO = 1.618033988749;
 
