@@ -256,8 +256,8 @@ function App() {
     // for (let ho = 0; ho <= 2 * Math.PI / TOTAL_HUES; ho += degreesToRadians(1)) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
-          for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-            for (let l4 = 0; l4 <= 3; l4 += 0.1) {
+          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: true,
@@ -266,8 +266,8 @@ function App() {
                   hueOffset: ho,
                   lightness1: l1,
                   lightness2: l2,
-                  lightness3: l3,
-                  lightness4: l4
+                  lightness3: 0,
+                  lightness4: 1
                 });
 
                 const minContrast600 = getMinLightContrast(palette, 6);
@@ -279,7 +279,7 @@ function App() {
                 if (minContrast700 < 4.5) {
                   continue;
                 }
-                
+
                 const minContrast800 = getMinLightContrast(palette, 8);
                 if (minContrast800 < 7) {
                   continue;
@@ -332,12 +332,12 @@ function App() {
                   console.log('light loss updated', bestLoss);
                 }
               // }
-            }
-          }
+            // }
+          // }
         }
       }
     // }
-    
+
     const endTimestamp = Date.now();
 
     console.log('Time taken: ', (endTimestamp - startTimestamp), 'ms');
@@ -359,8 +359,8 @@ function App() {
     // for (let ho = 0; ho <= 2 * Math.PI / TOTAL_HUES; ho += degreesToRadians(1)) {
       for (let l1 = 0; l1 <= 1; l1 += 0.1) {
         for (let l2 = 0; l2 <= 3; l2 += 0.1) {
-          for (let l3 = 0; l3 <= 1; l3 += 0.1) {
-            for (let l4 = 0; l4 <= 3; l4 += 0.1) {
+          // for (let l3 = 0; l3 <= 1; l3 += 0.1) {
+            // for (let l4 = 0; l4 <= 3; l4 += 0.1) {
               // for (let l5 = 0; l5 <= 3; l5 += 0.05) {
                 const palette = buildPalette({
                   isLight: false,
@@ -369,8 +369,8 @@ function App() {
                   hueOffset: ho,
                   lightness1: l1,
                   lightness2: l2,
-                  lightness3: l3,
-                  lightness4: l4
+                  lightness3: 0,
+                  lightness4: 1
                 });
 
                 const minDarkContrast400 = getMinDarkContrast(palette, 4);
@@ -382,7 +382,7 @@ function App() {
                 if (minDarkContrast300 < 4.5) {
                   continue;
                 }
-                
+
                 const minDarkContrast200 = getMinDarkContrast(palette, 2);
                 if (minDarkContrast200 < 7) {
                   continue;
@@ -435,12 +435,12 @@ function App() {
                   console.log('dark loss updated', bestLoss);
                 }
               // }
-            }
-          }
+            // }
+          // }
         }
       }
     // }
-    
+
     const endTimestamp = Date.now();
 
     console.log('Time taken: ', (endTimestamp - startTimestamp), 'ms');
