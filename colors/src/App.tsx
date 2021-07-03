@@ -31,6 +31,12 @@ function App() {
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
 
+  const BACKGROUND_OFFSET = TOTAL_STEPS - 1;
+  const LABEL_OFFSET = 4;
+  const PRIMARY_OFFSET = 3;
+  const STRONG_PRIMARY_OFFSET = 2;
+  const STRONGEST_PRIMARY_OFFSET = 1;
+
   // Light palette:
   // Background (cards, buttons, select boxes, tags, etc.)
   // Body
@@ -295,22 +301,22 @@ function App() {
                   lightness4: 1
                 });
 
-                const minContrastLabel = getMinLightContrast(palette, 6);
+                const minContrastLabel = getMinLightContrast(palette, TOTAL_STEPS - LABEL_OFFSET);
                 if (minContrastLabel < TARGET_LABEL_CONTRAST) {
                   continue;
                 }
 
-                const minContrastPrimary = getMinLightContrast(palette, 7);
+                const minContrastPrimary = getMinLightContrast(palette, TOTAL_STEPS - PRIMARY_OFFSET);
                 if (minContrastPrimary < TARGET_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minContrastStrongPrimary = getMinLightContrast(palette, 8);
+                const minContrastStrongPrimary = getMinLightContrast(palette, TOTAL_STEPS - STRONG_PRIMARY_OFFSET);
                 if (minContrastStrongPrimary < TARGET_STRONG_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minContrastStrongestPrimary = getMinLightContrast(palette, 9);
+                const minContrastStrongestPrimary = getMinLightContrast(palette, TOTAL_STEPS - STRONGEST_PRIMARY_OFFSET);
                 if (minContrastStrongestPrimary < TARGET_STRONGEST_PRIMARY_CONTRAST) {
                   continue;
                 }
@@ -326,15 +332,15 @@ function App() {
                 const targetContrastStrongestPrimary = TARGET_STRONGEST_PRIMARY_CONTRAST;
 
                 const loss = 0
-                  + getWhiteLoss(palette, 1, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
+                  + getWhiteLoss(palette, TOTAL_STEPS - BACKGROUND_OFFSET, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
                   // + getLightLoss(palette, 2, targetContrast200) * (targetContrastPrimary / targetContrast200)
                   // + getLightLoss(palette, 3, targetContrast300) * (targetContrastPrimary / targetContrast300)
                   // + getLightLoss(palette, 4, targetContrast400) * (targetContrastPrimary / targetContrast400)
                   // + getLightLoss(palette, 5, targetContrast500) * (targetContrastPrimary / targetContrast500)
                   // + getLightLoss(palette, 6, targetContrast600) * (targetContrastPrimary / targetContrast600)
-                  + getLightLoss(palette, 7, targetContrastPrimary)
+                  + getLightLoss(palette, TOTAL_STEPS - PRIMARY_OFFSET, targetContrastPrimary)
                   // + getLightLoss(palette, 8, targetContrast800) * (targetContrastPrimary / targetContrast800)
-                  + getLightLoss(palette, 9, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
+                  + getLightLoss(palette, TOTAL_STEPS - STRONGEST_PRIMARY_OFFSET, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
 
                 if (loss < bestLoss) {
                   bestPalette = palette;
@@ -388,22 +394,22 @@ function App() {
                   lightness4: 1
                 });
 
-                const minDarkContrastLabel = getMinDarkContrast(palette, 4);
+                const minDarkContrastLabel = getMinDarkContrast(palette, LABEL_OFFSET);
                 if (minDarkContrastLabel < TARGET_LABEL_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrastPrimary = getMinDarkContrast(palette, 3);
+                const minDarkContrastPrimary = getMinDarkContrast(palette, PRIMARY_OFFSET);
                 if (minDarkContrastPrimary < TARGET_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrastStrongPrimary = getMinDarkContrast(palette, 2);
+                const minDarkContrastStrongPrimary = getMinDarkContrast(palette, STRONG_PRIMARY_OFFSET);
                 if (minDarkContrastStrongPrimary < TARGET_STRONG_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrastStrongestPrimary = getMinDarkContrast(palette, 1);
+                const minDarkContrastStrongestPrimary = getMinDarkContrast(palette, STRONGEST_PRIMARY_OFFSET);
                 if (minDarkContrastStrongestPrimary < TARGET_STRONGEST_PRIMARY_CONTRAST) {
                   continue;
                 }
@@ -419,15 +425,15 @@ function App() {
                 const targetContrastStrongestPrimary = TARGET_STRONGEST_PRIMARY_CONTRAST;
 
                 const loss = 0
-                  + getBlackLoss(palette, 9, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
+                  + getBlackLoss(palette, BACKGROUND_OFFSET, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
                   // + getDarkLoss(palette, 8, targetContrast800) * (targetContrast300 / targetContrast800)
                   // + getDarkLoss(palette, 7, targetContrast700) * (targetContrast300 / targetContrast700)
                   // + getDarkLoss(palette, 6, targetContrast600) * (targetContrast300 / targetContrast600)
                   // + getDarkLoss(palette, 5, targetContrast500) * (targetContrast300 / targetContrast500)
                   // + getDarkLoss(palette, 4, targetContrast400) * (targetContrast300 / targetContrast400)
-                  + getDarkLoss(palette, 3, targetContrastPrimary)
+                  + getDarkLoss(palette, PRIMARY_OFFSET, targetContrastPrimary)
                   // + getDarkLoss(palette, 2, targetContrast200) * (targetContrast300 / targetContrast200)
-                  + getDarkLoss(palette, 1, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
+                  + getDarkLoss(palette, STRONGEST_PRIMARY_OFFSET, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
 
                 if (loss < bestLoss) {
                   bestPalette = palette;
