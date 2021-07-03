@@ -172,7 +172,7 @@ function App() {
     for (let hueIndex = 0; hueIndex < hues.length; hueIndex++) {
       const steps = hues[hueIndex];
       const lightestStep = steps[1];
-      const darkestStep = steps[9];
+      const darkestStep = steps[steps.length - 2];
 
       for (let stepIndex = 0; stepIndex < totalSteps + 1; stepIndex++) {
         const step = steps[stepIndex];
@@ -462,66 +462,66 @@ function App() {
     console.log('BEST DARK PALETTE', bestPalette);
   }
 
-  function jumpToPreviousSuitableHueOffset() {
-    for (let ho = hueOffset - 0.001; ho >= 0; ho -= 0.001) {
-      const lightPalette = buildPalette({
-        isLight: true,
-        totalHues: TOTAL_HUES,
-        totalSteps: TOTAL_STEPS,
-        hueOffset: ho,
-        lightness1: lightness1,
-        lightness2: lightness2,
-        lightness3: 0,
-        lightness4: 1
-      });
+  // function jumpToPreviousSuitableHueOffset() {
+  //   for (let ho = hueOffset - 0.001; ho >= 0; ho -= 0.001) {
+  //     const lightPalette = buildPalette({
+  //       isLight: true,
+  //       totalHues: TOTAL_HUES,
+  //       totalSteps: TOTAL_STEPS,
+  //       hueOffset: ho,
+  //       lightness1: lightness1,
+  //       lightness2: lightness2,
+  //       lightness3: 0,
+  //       lightness4: 1
+  //     });
 
-      const isSuitable = lightPalette.every((steps) => {
-        return steps[6].lightContrast >= 3 &&
-          steps[7].lightContrast >= 4.5 &&
-          steps[8].lightContrast >= 7 &&
-          steps[9].lightContrast >= 11;
-      });
+  //     const isSuitable = lightPalette.every((steps) => {
+  //       return steps[6].lightContrast >= 3 &&
+  //         steps[7].lightContrast >= 4.5 &&
+  //         steps[8].lightContrast >= 7 &&
+  //         steps[9].lightContrast >= 11;
+  //     });
 
-      if (isSuitable) {
-        setLightPalette(lightPalette);
-        setHueOffset(ho);
-        break;
-      }
-    }
-  }
+  //     if (isSuitable) {
+  //       setLightPalette(lightPalette);
+  //       setHueOffset(ho);
+  //       break;
+  //     }
+  //   }
+  // }
 
-  function jumpToNextSuitableHueOffset() {
-    console.log('JUMP');
-    for (let ho = hueOffset + 0.001; ho <= degreesToRadians(360); ho += 0.001) {
-      const lightPalette = buildPalette({
-        isLight: true,
-        totalHues: TOTAL_HUES,
-        totalSteps: TOTAL_STEPS,
-        hueOffset: ho,
-        lightness1: lightness1,
-        lightness2: lightness2,
-        lightness3: 0,
-        lightness4: 1
-      });
+  // function jumpToNextSuitableHueOffset() {
+  //   console.log('JUMP');
+  //   for (let ho = hueOffset + 0.001; ho <= degreesToRadians(360); ho += 0.001) {
+  //     const lightPalette = buildPalette({
+  //       isLight: true,
+  //       totalHues: TOTAL_HUES,
+  //       totalSteps: TOTAL_STEPS,
+  //       hueOffset: ho,
+  //       lightness1: lightness1,
+  //       lightness2: lightness2,
+  //       lightness3: 0,
+  //       lightness4: 1
+  //     });
 
-      const isSuitable = lightPalette.every((steps) => {
-        return steps[6].lightContrast >= 3 &&
-          steps[7].lightContrast >= 4.5 &&
-          steps[8].lightContrast >= 7 &&
-          steps[9].lightContrast >= 11;
-      });
+  //     const isSuitable = lightPalette.every((steps) => {
+  //       return steps[6].lightContrast >= 3 &&
+  //         steps[7].lightContrast >= 4.5 &&
+  //         steps[8].lightContrast >= 7 &&
+  //         steps[9].lightContrast >= 11;
+  //     });
 
-      if (isSuitable) {
-        setLightPalette(lightPalette);
-        setHueOffset(ho);
-        break;
-      }
-    }
-  }
+  //     if (isSuitable) {
+  //       setLightPalette(lightPalette);
+  //       setHueOffset(ho);
+  //       break;
+  //     }
+  //   }
+  // }
 
-  function degreesToRadians(degrees: number): number {
-    return degrees / 180 * Math.PI;
-  }
+  // function degreesToRadians(degrees: number): number {
+  //   return degrees / 180 * Math.PI;
+  // }
 
   return (
     <div className="App">
@@ -530,7 +530,7 @@ function App() {
           <div className="mode mode-light"
             style={{
               background: lightPalette[0][1].hex,
-              color: lightPalette[0][9].hex
+              color: lightPalette[0][lightPalette[0].length - 2].hex
             }}>
             <div className="colors">
               {lightPalette[0].map(
@@ -567,7 +567,7 @@ function App() {
                   )
               )}
             </div>
-            <div className="controls">
+            {/* <div className="controls">
               <ReactSlider
                 className="horizontal-slider"
                 thumbClassName="example-thumb"
@@ -581,11 +581,11 @@ function App() {
               <button type="button" onClick={jumpToPreviousSuitableHueOffset}>←</button>
               {hueOffset}
               <button type="button" onClick={jumpToNextSuitableHueOffset}>→</button>
-            </div>
+            </div> */}
           </div>
           <div className="mode mode-dark"
             style={{
-              background: darkPalette[0][9].hex,
+              background: darkPalette[0][darkPalette[0].length - 2].hex,
               color: darkPalette[0][1].hex
             }}>
             <div className="colors">
