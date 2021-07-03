@@ -6,6 +6,12 @@ import interpolator from 'natural-spline-interpolator';
 import * as culori from 'culori';
 
 function App() {
+  const TARGET_BACKGROUND_CONTRAST = 1.15;
+  const TARGET_LABEL_CONTRAST = 3;
+  const TARGET_PRIMARY_CONTRAST = 4.5;
+  const TARGET_STRONG_PRIMARY_CONTRAST = 7;
+  const TARGET_STRONGEST_PRIMARY_CONTRAST = 11;
+
   const showContrastScores = true;
 
   const lightChromaInterpolator = interpolator([[0, 0.5], [0.5, 0.25], [1, 0.075]]);
@@ -24,6 +30,25 @@ function App() {
 
   const TOTAL_HUES = 12;
   const TOTAL_STEPS = 10;
+
+  // Light palette:
+  // Background (cards, buttons, select boxes, tags, etc.)
+  // Body
+  // Disabled
+  // Label
+  // Primary (text, small title)
+  // Strong primary (blog post text, medium title)
+  // Strongest primary (large title)
+  // Focus
+  // Hover
+  // Active
+  // Selected
+
+
+  // Element background
+  // Hover background (for buttons, and various elements)
+  // Disabled state
+  //
 
   function calculateChroma(x: number, isLight: boolean): number {
     return (isLight)
@@ -270,56 +295,46 @@ function App() {
                   lightness4: 1
                 });
 
-                const minContrast600 = getMinLightContrast(palette, 6);
-                if (minContrast600 < 3) {
+                const minContrastLabel = getMinLightContrast(palette, 6);
+                if (minContrastLabel < TARGET_LABEL_CONTRAST) {
                   continue;
                 }
 
-                const minContrast700 = getMinLightContrast(palette, 7);
-                if (minContrast700 < 4.5) {
+                const minContrastPrimary = getMinLightContrast(palette, 7);
+                if (minContrastPrimary < TARGET_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minContrast800 = getMinLightContrast(palette, 8);
-                if (minContrast800 < 7) {
+                const minContrastStrongPrimary = getMinLightContrast(palette, 8);
+                if (minContrastStrongPrimary < TARGET_STRONG_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minContrast900 = getMinLightContrast(palette, 9);
-                if (minContrast900 < 11) {
+                const minContrastStrongestPrimary = getMinLightContrast(palette, 9);
+                if (minContrastStrongestPrimary < TARGET_STRONGEST_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const targetContrast100 = 1.15;
-                const targetContrast200 = getAverageLightContrast(palette, 2);
-                const targetContrast300 = getAverageLightContrast(palette, 3);
-                const targetContrast400 = getAverageLightContrast(palette, 4);
-                const targetContrast500 = getAverageLightContrast(palette, 5);
-                const targetContrast600 = getAverageLightContrast(palette, 6);
-                const targetContrast700 = 4.5;
-                const targetContrast800 = getAverageLightContrast(palette, 8);
-                const targetContrast900 = 11;
-
-                const loss100 = getWhiteLoss(palette, 1, targetContrast100) * (targetContrast700 / targetContrast100);
-                const loss200 = getLightLoss(palette, 2, targetContrast200) * (targetContrast700 / targetContrast200);
-                const loss300 = getLightLoss(palette, 3, targetContrast300) * (targetContrast700 / targetContrast300);
-                const loss400 = getLightLoss(palette, 4, targetContrast400) * (targetContrast700 / targetContrast400);
-                const loss500 = getLightLoss(palette, 5, targetContrast500) * (targetContrast700 / targetContrast500);
-                const loss600 = getLightLoss(palette, 6, targetContrast600) * (targetContrast700 / targetContrast600);
-                const loss700 = getLightLoss(palette, 7, targetContrast700);
-                const loss800 = getLightLoss(palette, 8, targetContrast800) * (targetContrast700 / targetContrast800);
-                const loss900 = getLightLoss(palette, 9, targetContrast900) * (targetContrast700 / targetContrast900);
+                const targetContrastBackground = TARGET_BACKGROUND_CONTRAST;
+                // const targetContrast200 = getAverageLightContrast(palette, 2);
+                // const targetContrast300 = getAverageLightContrast(palette, 3);
+                // const targetContrast400 = getAverageLightContrast(palette, 4);
+                // const targetContrast500 = getAverageLightContrast(palette, 5);
+                // const targetContrast600 = getAverageLightContrast(palette, 6);
+                const targetContrastPrimary = TARGET_PRIMARY_CONTRAST;
+                // const targetContrast800 = getAverageLightContrast(palette, 8);
+                const targetContrastStrongestPrimary = TARGET_STRONGEST_PRIMARY_CONTRAST;
 
                 const loss = 0
-                  + loss100
-                  + loss200
-                  + loss300
-                  + loss400
-                  + loss500
-                  + loss600
-                  + loss700
-                  + loss800
-                  + loss900;
+                  + getWhiteLoss(palette, 1, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
+                  // + getLightLoss(palette, 2, targetContrast200) * (targetContrastPrimary / targetContrast200)
+                  // + getLightLoss(palette, 3, targetContrast300) * (targetContrastPrimary / targetContrast300)
+                  // + getLightLoss(palette, 4, targetContrast400) * (targetContrastPrimary / targetContrast400)
+                  // + getLightLoss(palette, 5, targetContrast500) * (targetContrastPrimary / targetContrast500)
+                  // + getLightLoss(palette, 6, targetContrast600) * (targetContrastPrimary / targetContrast600)
+                  + getLightLoss(palette, 7, targetContrastPrimary)
+                  // + getLightLoss(palette, 8, targetContrast800) * (targetContrastPrimary / targetContrast800)
+                  + getLightLoss(palette, 9, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
 
                 if (loss < bestLoss) {
                   bestPalette = palette;
@@ -373,56 +388,46 @@ function App() {
                   lightness4: 1
                 });
 
-                const minDarkContrast400 = getMinDarkContrast(palette, 4);
-                if (minDarkContrast400 < 3) {
+                const minDarkContrastLabel = getMinDarkContrast(palette, 4);
+                if (minDarkContrastLabel < TARGET_LABEL_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrast300 = getMinDarkContrast(palette, 3);
-                if (minDarkContrast300 < 4.5) {
+                const minDarkContrastPrimary = getMinDarkContrast(palette, 3);
+                if (minDarkContrastPrimary < TARGET_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrast200 = getMinDarkContrast(palette, 2);
-                if (minDarkContrast200 < 7) {
+                const minDarkContrastStrongPrimary = getMinDarkContrast(palette, 2);
+                if (minDarkContrastStrongPrimary < TARGET_STRONG_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const minDarkContrast100 = getMinDarkContrast(palette, 1);
-                if (minDarkContrast100 < 11) {
+                const minDarkContrastStrongestPrimary = getMinDarkContrast(palette, 1);
+                if (minDarkContrastStrongestPrimary < TARGET_STRONGEST_PRIMARY_CONTRAST) {
                   continue;
                 }
 
-                const targetContrast900 = 1.15;
-                const targetContrast800 = getAverageDarkContrast(palette, 8);
-                const targetContrast700 = getAverageDarkContrast(palette, 7);
-                const targetContrast600 = getAverageDarkContrast(palette, 6);
-                const targetContrast500 = getAverageDarkContrast(palette, 5);
-                const targetContrast400 = getAverageDarkContrast(palette, 4);
-                const targetContrast300 = 4.5;
-                const targetContrast200 = getAverageDarkContrast(palette, 2);
-                const targetContrast100 = 11;
-
-                const loss900 = getBlackLoss(palette, 9, targetContrast900) * (targetContrast300 / targetContrast900);
-                const loss800 = getDarkLoss(palette, 8, targetContrast800) * (targetContrast300 / targetContrast800);
-                const loss700 = getDarkLoss(palette, 7, targetContrast700) * (targetContrast300 / targetContrast700);
-                const loss600 = getDarkLoss(palette, 6, targetContrast600) * (targetContrast300 / targetContrast600);
-                const loss500 = getDarkLoss(palette, 5, targetContrast500) * (targetContrast300 / targetContrast500);
-                const loss400 = getDarkLoss(palette, 4, targetContrast400) * (targetContrast300 / targetContrast400);
-                const loss300 = getDarkLoss(palette, 3, targetContrast300);
-                const loss200 = getDarkLoss(palette, 2, targetContrast200) * (targetContrast300 / targetContrast200);
-                const loss100 = getDarkLoss(palette, 1, targetContrast100) * (targetContrast300 / targetContrast100);
+                const targetContrastBackground = TARGET_BACKGROUND_CONTRAST;
+                // const targetContrast800 = getAverageDarkContrast(palette, 8);
+                // const targetContrast700 = getAverageDarkContrast(palette, 7);
+                // const targetContrast600 = getAverageDarkContrast(palette, 6);
+                // const targetContrast500 = getAverageDarkContrast(palette, 5);
+                // const targetContrast400 = getAverageDarkContrast(palette, 4);
+                const targetContrastPrimary = TARGET_PRIMARY_CONTRAST;
+                // const targetContrast200 = getAverageDarkContrast(palette, 2);
+                const targetContrastStrongestPrimary = TARGET_STRONGEST_PRIMARY_CONTRAST;
 
                 const loss = 0
-                  + loss100
-                  + loss200
-                  + loss300
-                  + loss400
-                  + loss500
-                  + loss600
-                  + loss700
-                  + loss800
-                  + loss900;
+                  + getBlackLoss(palette, 9, targetContrastBackground) * (targetContrastPrimary / targetContrastBackground)
+                  // + getDarkLoss(palette, 8, targetContrast800) * (targetContrast300 / targetContrast800)
+                  // + getDarkLoss(palette, 7, targetContrast700) * (targetContrast300 / targetContrast700)
+                  // + getDarkLoss(palette, 6, targetContrast600) * (targetContrast300 / targetContrast600)
+                  // + getDarkLoss(palette, 5, targetContrast500) * (targetContrast300 / targetContrast500)
+                  // + getDarkLoss(palette, 4, targetContrast400) * (targetContrast300 / targetContrast400)
+                  + getDarkLoss(palette, 3, targetContrastPrimary)
+                  // + getDarkLoss(palette, 2, targetContrast200) * (targetContrast300 / targetContrast200)
+                  + getDarkLoss(palette, 1, targetContrastStrongestPrimary) * (targetContrastPrimary / targetContrastStrongestPrimary);
 
                 if (loss < bestLoss) {
                   bestPalette = palette;
