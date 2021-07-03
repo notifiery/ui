@@ -29,7 +29,7 @@ function App() {
   const [lightness4, setLightness4] = useState<any>(0);
 
   const TOTAL_HUES = 12;
-  const TOTAL_STEPS = 10;
+  const TOTAL_STEPS = 11;
 
   const BACKGROUND_OFFSET = TOTAL_STEPS - 1;
   const LABEL_OFFSET = 4;
@@ -538,7 +538,7 @@ function App() {
                   <div key={stepIndex} className="color-step">
                     {(stepIndex === 0)
                       ? 'WHITE'
-                      : (stepIndex === 10)
+                      : (stepIndex === lightPalette[0].length - 1)
                         ? 'BLACK'
                         : stepIndex * 100}
                   </div>
@@ -555,10 +555,10 @@ function App() {
                         {(showContrastScores) ? (<div className={[
                           'color-contrast',
                           (
-                            (stepIndex === 6 && step.lightContrast >= 3 && step.lightContrast <= 4.5) ||
-                            (stepIndex === 7 && step.lightContrast >= 4.5 && step.lightContrast <= 7) ||
-                            (stepIndex === 8 && step.lightContrast >= 7 && step.lightContrast <= 11) ||
-                            (stepIndex === 9 && step.lightContrast >= 11)
+                            (stepIndex === TOTAL_STEPS - LABEL_OFFSET && step.lightContrast >= 3 && step.lightContrast <= 4.5) ||
+                            (stepIndex === TOTAL_STEPS - PRIMARY_OFFSET && step.lightContrast >= 4.5 && step.lightContrast <= 7) ||
+                            (stepIndex === TOTAL_STEPS - STRONG_PRIMARY_OFFSET && step.lightContrast >= 7 && step.lightContrast <= 11) ||
+                            (stepIndex === TOTAL_STEPS - STRONGEST_PRIMARY_OFFSET && step.lightContrast >= 11)
                           )
                             ? 'color-contrast-satisfying'
                             : ''
@@ -594,9 +594,9 @@ function App() {
                   <div key={stepIndex} className="color-step">
                     {(stepIndex === 0)
                       ? 'WHITE'
-                      : (stepIndex === 10)
+                      : (stepIndex === darkPalette[0].length - 1)
                         ? 'BLACK'
-                        : 1000 - stepIndex * 100}
+                        : ((lightPalette[0].length - 1) * 100) - stepIndex * 100}
                   </div>
               )}
 
@@ -611,10 +611,10 @@ function App() {
                         {(showContrastScores) ? (<div className={[
                           'color-contrast',
                           (
-                            (stepIndex === 4 && step.darkContrast >= 3 && step.darkContrast <= 4.5) ||
-                            (stepIndex === 3 && step.darkContrast >= 4.5 && step.darkContrast <= 7) ||
-                            (stepIndex === 2 && step.darkContrast >= 7 && step.darkContrast <= 11) ||
-                            (stepIndex === 1 && step.darkContrast >= 11)
+                            (stepIndex === LABEL_OFFSET && step.darkContrast >= 3 && step.darkContrast <= 4.5) ||
+                            (stepIndex === PRIMARY_OFFSET && step.darkContrast >= 4.5 && step.darkContrast <= 7) ||
+                            (stepIndex === STRONG_PRIMARY_OFFSET && step.darkContrast >= 7 && step.darkContrast <= 11) ||
+                            (stepIndex === STRONGEST_PRIMARY_OFFSET && step.darkContrast >= 11)
                           )
                             ? 'color-contrast-satisfying'
                             : ''
